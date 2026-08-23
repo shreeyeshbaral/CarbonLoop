@@ -3,6 +3,12 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { Asset, CircularAction, AssetCondition } from "@/types";
 import { MOCK_ASSETS as INITIAL_ASSETS } from "@/lib/mockAssets";
+import {
+  getAllAssetsFromDB,
+  saveAllAssetsToDB,
+  putAssetInDB,
+  deleteAssetFromDB,
+} from "@/lib/indexedDb";
 
 interface AssetContextType {
   assets: Asset[];
@@ -12,37 +18,30 @@ interface AssetContextType {
   markAsRecycled: (id: string) => void;
   getAssetById: (id: string) => Asset | undefined;
   resetToDefault: () => void;
+  isLoading: boolean;
 }
 
 const AssetContext = createContext<AssetContextType | undefined>(undefined);
 
 export function AssetProvider({ children }: { children: ReactNode }) {
   const [assets, setAssets] = useState<Asset[]>(INITIAL_ASSETS);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Load from localStorage on mount if available
+  // Load from high-capacity IndexedDB on mount
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem("carbonloop_assets");
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setAssets(parsed);
+    getAllAssetsFromDB()
+      .then((loadedAssets) => {
+        if (loadedAssets && loadedAssets.length > 0) {
+          setAssets(loadedAssets);
         }
-      }
-    } catch (e) {
-      console.warn("Failed to load assets from localStorage, using defaults.");
-    }
+      })
+      .catch((err) => {
+        console.warn("Failed to load from IndexedDB:", err);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }, []);
-
-  // Sync to localStorage
-  const saveAssets = (newAssets: Asset[]) => {
-    setAssets(newAssets);
-    try {
-      localStorage.setItem("carbonloop_assets", JSON.stringify(newAssets));
-    } catch (e) {
-      console.warn("Failed to persist assets to localStorage");
-    }
-  };
 
   const addAsset = (newAssetData: Omit<Asset, "id" | "createdAt" | "updatedAt">): Asset => {
     const id = `ast-${Date.now()}`;
@@ -53,26 +52,33 @@ export function AssetProvider({ children }: { children: ReactNode }) {
       createdAt: timestamp,
       updatedAt: timestamp,
     };
-    saveAssets([created, ...assets]);
+
+    const newAssets = [created, ...assets];
+    setAssets(newAssets);
+    putAssetInDB(created);
     return created;
   };
 
   const updateAsset = (id: string, updates: Partial<Asset>) => {
-    const updated = assets.map((item) =>
-      item.id === id
-        ? {
-            ...item,
-            ...updates,
-            updatedAt: new Date().toISOString(),
-          }
-        : item
-    );
-    saveAssets(updated);
+    const updated = assets.map((item) => {
+      if (item.id === id) {
+        const modified = {
+          ...item,
+          ...updates,
+          updatedAt: new Date().toISOString(),
+        };
+        putAssetInDB(modified);
+        return modified;
+      }
+      return item;
+    });
+    setAssets(updated);
   };
 
   const deleteAsset = (id: string) => {
     const remaining = assets.filter((item) => item.id !== id);
-    saveAssets(remaining);
+    setAssets(remaining);
+    deleteAssetFromDB(id);
   };
 
   const markAsRecycled = (id: string) => {
@@ -88,7 +94,8 @@ export function AssetProvider({ children }: { children: ReactNode }) {
   };
 
   const resetToDefault = () => {
-    saveAssets(INITIAL_ASSETS);
+    setAssets(INITIAL_ASSETS);
+    saveAllAssetsToDB(INITIAL_ASSETS);
   };
 
   return (
@@ -101,6 +108,7 @@ export function AssetProvider({ children }: { children: ReactNode }) {
         markAsRecycled,
         getAssetById,
         resetToDefault,
+        isLoading,
       }}
     >
       {children}
