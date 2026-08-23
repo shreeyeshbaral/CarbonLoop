@@ -10,6 +10,14 @@ const config: Config = {
     "./lib/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
+    screens: {
+      xs: "375px",     // Small phones (iPhone SE, compact devices)
+      sm: "640px",     // Large phones & small tablets
+      md: "768px",     // iPad / Tablets portrait
+      lg: "1024px",    // Tablets landscape & laptops
+      xl: "1280px",    // Standard desktop screens
+      "2xl": "1536px", // Wide enterprise monitors
+    },
     extend: {
       colors: {
         canvas: "#F7F4EC",       // Primary warm coffee-white background
