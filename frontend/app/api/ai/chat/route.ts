@@ -15,9 +15,84 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Messages array required" }, { status: 400 });
     }
 
-    const latestUserMessage = messages[messages.length - 1]?.content?.toLowerCase() || "";
+    const apiKey = process.env.OPENAI_API_KEY;
 
-    // Intelligent context-aware rule-based circular engine with LLM fallback capability
+    // 1. Try Live OpenAI API if key is present
+    if (apiKey && apiKey.startsWith("sk-")) {
+      try {
+        const systemPrompt = `You are the CarbonLoop Campus Circular AI Copilot for ITER, Siksha 'O' Anusandhan (SOA) Deemed to be University, Bhubaneswar, Odisha, India.
+You are an expert in institutional circular asset management, Scope 3 greenhouse gas (GHG) carbon accounting, NIST 800-88 IT data sanitization compliance, and Google OR-Tools reverse logistics.
+
+### Authentic Campus Knowledge & Topology:
+- Campus Location: ITER SOA University, Jagamara, Bhubaneswar (20.2474° N, 85.8008° E)
+- Academic Blocks & Buildings:
+  1. Centre for Data Science & C-block: Computer Science & AI Labs, High-Performance Servers
+  2. ITER Administrative Block: Central Stores & Logistics Van Depot (Dr. Alok Verma)
+  3. ITER Central Library: Reference Halls, Ergonomic Furniture, Multimedia Bays
+  4. D-block: Electronics & Communication (ECE / VLSI Labs)
+  5. Bansuri Guru Auditorium & Media Wing: Design & Innovation Media Studio
+  6. F-Block & G-Block: Mechanical Engineering & CAD/CAM Labs
+  7. A-Block: Civil Engineering & Survey Stores
+  8. S-Block & Discovery Center: Advanced Nanotechnology & Cleanroom Office
+
+### Live Institutional Stats & Metrics:
+- Avoided Procurement: ₹${(MOCK_IMPACT_METRICS.procurementAvoidedInr / 100000).toFixed(2)} Lakhs (Direct capital retained)
+- Scope 3 CO2e Abatement: ${(MOCK_IMPACT_METRICS.co2AvoidedKg / 1000).toFixed(2)} Metric Tons
+- Landfill E-Waste Diverted: ${(MOCK_IMPACT_METRICS.wasteDivertedKg / 1000).toFixed(2)} Metric Tons
+- Reverse Logistics Mileage Saved: ${MOCK_IMPACT_METRICS.logisticsKmOptimized} km via Google OR-Tools (41.2% distance reduction)
+- Active Surplus Inventory: ${MOCK_ASSETS.length} tracked assets (Dell Laptops, 4K BenQ Monitors, Herman Miller Chairs, Cisco PoE Switches, Epson Projectors).
+
+### Guidelines for Responses:
+- Speak professionally, enthusiastically, and concisely as an institutional sustainability copilot.
+- Use markdown formatting with bolding, bullet points, and emoji headers.
+- Reference real ITER buildings (e.g. C-block, D-block, Bansuri Guru Wing, Central Library).
+- Link to relevant platform routes when appropriate: [Asset Marketplace](/assets), [Campus Resource Map](/map), [Matching Engine](/intelligence), [Route Optimizer](/routes), [Impact & ESG Analytics](/analytics).
+- When asked about data wipe, explain the 3-pass cryptographic NIST SP 800-88 Rev. 1 sanitization certificate.`;
+
+        const openAiMessages = [
+          { role: "system", content: systemPrompt },
+          ...messages.slice(-6).map((m: any) => ({
+            role: m.role === "assistant" ? "assistant" : "user",
+            content: m.content,
+          })),
+        ];
+
+        const openAiRes = await fetch("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${apiKey}`,
+          },
+          body: JSON.stringify({
+            model: "gpt-4o-mini",
+            messages: openAiMessages,
+            temperature: 0.7,
+            max_tokens: 600,
+          }),
+        });
+
+        if (openAiRes.ok) {
+          const data = await openAiRes.json();
+          const reply = data.choices?.[0]?.message?.content;
+          if (reply) {
+            return NextResponse.json({
+              role: "assistant",
+              content: reply,
+              timestamp: new Date().toISOString(),
+              provider: "OpenAI GPT-4o-mini",
+            });
+          }
+        } else {
+          const errorData = await openAiRes.json().catch(() => ({}));
+          console.warn("OpenAI API returned non-200, falling back to local engine:", errorData);
+        }
+      } catch (openAiErr) {
+        console.warn("OpenAI fetch failed, activating local deterministic fallback:", openAiErr);
+      }
+    }
+
+    // 2. Local Deterministic Campus Intelligence Engine Fallback
+    const latestUserMessage = messages[messages.length - 1]?.content?.toLowerCase() || "";
     let reply = "";
 
     if (
@@ -77,6 +152,7 @@ export async function POST(req: NextRequest) {
       role: "assistant",
       content: reply,
       timestamp: new Date().toISOString(),
+      provider: "CarbonLoop Local Campus Engine",
     });
   } catch (error: any) {
     console.error("AI Chatbot Error:", error);
