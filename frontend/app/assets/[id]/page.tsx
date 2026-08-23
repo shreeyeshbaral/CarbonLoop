@@ -1,6 +1,7 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import {
   ArrowLeft,
   Boxes,
@@ -24,9 +25,14 @@ import {
   Truck,
   User,
   Wrench,
+  AlertCircle,
 } from "lucide-react";
 import { MOCK_ASSETS } from "@/lib/mockAssets";
 import { formatCurrency, formatWeight } from "@/lib/utils";
+import { useRole } from "@/context/RoleContext";
+import { DataWipeVerificationModal } from "@/components/governance/DataWipeVerificationModal";
+import { validateStateTransition } from "@/lib/stateMachine";
+import { AssetStatus } from "@/types";
 
 interface AssetDetailsPageProps {
   params: {
@@ -35,7 +41,13 @@ interface AssetDetailsPageProps {
 }
 
 export default function AssetDetailsPage({ params }: AssetDetailsPageProps) {
-  const asset = MOCK_ASSETS.find((a) => a.id === params.id || a.assetTag === params.id);
+  const initialAsset = MOCK_ASSETS.find((a) => a.id === params.id || a.assetTag === params.id);
+  const { currentRole, user } = useRole();
+
+  const [asset, setAsset] = useState(initialAsset);
+  const [isWipeModalOpen, setIsWipeModalOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   if (!asset) {
     return (
@@ -57,8 +69,62 @@ export default function AssetDetailsPage({ params }: AssetDetailsPageProps) {
     );
   }
 
+  const handleAdvanceStatus = (targetStatus: AssetStatus) => {
+    setErrorMessage(null);
+    const validation = validateStateTransition(
+      asset.status,
+      targetStatus,
+      asset.dataWipeRequired,
+      asset.dataWipeCompleted,
+      currentRole
+    );
+
+    if (!validation.allowed) {
+      setErrorMessage(validation.errorMessage || "Transition blocked by governance rules.");
+      setTimeout(() => setErrorMessage(null), 6000);
+      return;
+    }
+
+    setAsset({
+      ...asset,
+      status: targetStatus,
+    });
+
+    setToastMessage(`Status successfully transitioned to: ${targetStatus}`);
+    setTimeout(() => setToastMessage(null), 5000);
+  };
+
+  const handleWipeVerified = (cert: any) => {
+    setAsset({
+      ...asset,
+      dataWipeCompleted: true,
+      status: "DATA_WIPED",
+    });
+    setToastMessage(`NIST 800-88 Certificate ${cert.certificateId} recorded by ${cert.officerName}. Data wipe verified.`);
+    setTimeout(() => setToastMessage(null), 6000);
+  };
+
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="fixed bottom-6 right-6 z-50 p-4 rounded-2xl bg-forest text-surface shadow-elevated flex items-center gap-3 border border-forest-light/20 text-xs animate-in slide-in-from-bottom-5">
+          <CheckCircle2 className="w-5 h-5 shrink-0 text-leaf" />
+          <span>{toastMessage}</span>
+        </div>
+      )}
+
+      {/* Error Alert */}
+      {errorMessage && (
+        <div className="p-4 rounded-2xl bg-amber-light border border-amber/40 text-xs text-ink flex items-start gap-3 animate-in shake">
+          <AlertCircle className="w-5 h-5 text-amber shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <span className="font-bold text-amber block">Governance & State Guard Notice:</span>
+            <span>{errorMessage}</span>
+          </div>
+        </div>
+      )}
+
       {/* Breadcrumb Bar */}
       <nav className="flex items-center gap-2 text-xs text-ink-muted">
         <Link href="/dashboard" className="hover:text-forest transition-colors">
@@ -83,8 +149,8 @@ export default function AssetDetailsPage({ params }: AssetDetailsPageProps) {
               <span className="font-mono text-xs font-bold text-forest bg-forest-light px-2.5 py-0.5 rounded border border-forest/20">
                 {asset.assetTag}
               </span>
-              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-surfaceSubtle text-ink border border-border">
-                {asset.status}
+              <span className="text-xs font-bold uppercase tracking-wide px-2.5 py-0.5 rounded-full bg-surfaceSubtle text-ink border border-border">
+                {asset.status.replace("_", " ")}
               </span>
               <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-forest-light text-forest border border-forest/20">
                 {asset.condition} Condition
@@ -103,13 +169,53 @@ export default function AssetDetailsPage({ params }: AssetDetailsPageProps) {
           </div>
         </div>
 
-        {/* Quick Header Actions */}
-        <div className="flex items-center gap-3 shrink-0">
+        {/* Workflow State Action Controls */}
+        <div className="flex items-center gap-2.5 flex-wrap">
+          {asset.status === "AVAILABLE" && (
+            <button
+              onClick={() => handleAdvanceStatus("REQUESTED")}
+              className="px-4 py-2.5 rounded-xl bg-forest text-surface text-xs font-bold hover:bg-forest-dark transition-all shadow-xs flex items-center gap-1.5"
+            >
+              <Boxes className="w-4 h-4" />
+              Claim / Request Asset
+            </button>
+          )}
+
+          {asset.status === "REQUESTED" && (
+            <button
+              onClick={() => handleAdvanceStatus("IN_REVIEW")}
+              className="px-4 py-2.5 rounded-xl bg-forest text-surface text-xs font-bold hover:bg-forest-dark transition-all shadow-xs flex items-center gap-1.5"
+            >
+              <Clock className="w-4 h-4" />
+              Begin Custodian Review
+            </button>
+          )}
+
+          {asset.status === "IN_REVIEW" && (
+            <button
+              onClick={() => handleAdvanceStatus("APPROVED")}
+              className="px-4 py-2.5 rounded-xl bg-forest text-surface text-xs font-bold hover:bg-forest-dark transition-all shadow-xs flex items-center gap-1.5"
+            >
+              <CheckCircle2 className="w-4 h-4" />
+              Approve Department Transfer
+            </button>
+          )}
+
+          {asset.dataWipeRequired && !asset.dataWipeCompleted && (
+            <button
+              onClick={() => setIsWipeModalOpen(true)}
+              className="px-4 py-2.5 rounded-xl bg-amber text-surface text-xs font-bold hover:bg-amber-hover transition-all shadow-xs flex items-center gap-1.5"
+            >
+              <ShieldAlert className="w-4 h-4" />
+              Perform NIST 800-88 Data Wipe
+            </button>
+          )}
+
           <Link
             href="/intelligence"
-            className="px-4 py-2.5 rounded-xl bg-forest text-surface text-xs font-bold hover:bg-forest-dark transition-all shadow-xs flex items-center gap-1.5"
+            className="px-4 py-2.5 rounded-xl bg-surface border border-border text-ink text-xs font-bold hover:bg-canvas transition-colors shadow-xs flex items-center gap-1.5"
           >
-            <Sparkles className="w-4 h-4" />
+            <Sparkles className="w-4 h-4 text-forest" />
             Find Department Match
           </Link>
         </div>
@@ -209,13 +315,19 @@ export default function AssetDetailsPage({ params }: AssetDetailsPageProps) {
               {/* Event 2 */}
               {asset.dataWipeRequired && (
                 <div className="relative flex items-start gap-4 pl-8">
-                  <div className="absolute left-1.5 top-1 w-4 h-4 rounded-full bg-forest border-2 border-surface flex items-center justify-center"></div>
+                  <div className={`absolute left-1.5 top-1 w-4 h-4 rounded-full border-2 border-surface flex items-center justify-center ${asset.dataWipeCompleted ? "bg-forest" : "bg-amber"}`}></div>
                   <div>
-                    <span className="text-[11px] font-bold text-forest">IT Security Data Wipe Verification</span>
+                    <span className={`text-[11px] font-bold ${asset.dataWipeCompleted ? "text-forest" : "text-amber"}`}>
+                      {asset.dataWipeCompleted ? "IT Security Data Wipe Verified" : "Data Wipe Audit Pending"}
+                    </span>
                     <p className="text-xs text-ink mt-0.5">
-                      Sanitized under NIST 800-88 standard by Central IT Officer.
+                      {asset.dataWipeCompleted
+                        ? "Sanitized under NIST 800-88 cryptographic purge standard."
+                        : "Requires IT Officer cryptographic wipe before transfer dispatch."}
                     </p>
-                    <span className="text-[10px] text-ink-muted">Certificate Ref: CERT-NIST-2024-8841</span>
+                    {asset.dataWipeCompleted && (
+                      <span className="text-[10px] text-ink-muted">Certificate Ref: CERT-NIST-2024-8841</span>
+                    )}
                   </div>
                 </div>
               )}
@@ -224,9 +336,9 @@ export default function AssetDetailsPage({ params }: AssetDetailsPageProps) {
               <div className="relative flex items-start gap-4 pl-8">
                 <div className="absolute left-1.5 top-1 w-4 h-4 rounded-full bg-leaf border-2 border-surface flex items-center justify-center"></div>
                 <div>
-                  <span className="text-[11px] font-bold text-leaf">Marketplace Readiness</span>
+                  <span className="text-[11px] font-bold text-leaf">Current State: {asset.status}</span>
                   <p className="text-xs text-ink mt-0.5">
-                    Asset ready for automated matching and reverse logistics dispatch.
+                    Viewing perspective: <span className="font-semibold">{user.name} ({currentRole})</span>
                   </p>
                 </div>
               </div>
@@ -262,10 +374,20 @@ export default function AssetDetailsPage({ params }: AssetDetailsPageProps) {
 
           {/* IT Data-Wipe Security Card */}
           <div className="p-6 rounded-2xl bg-surface border border-border/80 shadow-card space-y-3">
-            <h4 className="font-heading text-sm font-bold text-ink flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-forest" />
-              IT Security & Data Compliance
-            </h4>
+            <div className="flex items-center justify-between">
+              <h4 className="font-heading text-sm font-bold text-ink flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-forest" />
+                IT Security & Data Compliance
+              </h4>
+              {asset.dataWipeRequired && !asset.dataWipeCompleted && (
+                <button
+                  onClick={() => setIsWipeModalOpen(true)}
+                  className="text-[10px] font-bold text-amber hover:underline"
+                >
+                  Perform Wipe →
+                </button>
+              )}
+            </div>
 
             <div className="p-3 rounded-xl bg-canvas border border-border/60 text-xs space-y-1.5">
               <div className="flex items-center justify-between">
@@ -275,7 +397,7 @@ export default function AssetDetailsPage({ params }: AssetDetailsPageProps) {
               <div className="flex items-center justify-between">
                 <span className="text-ink-muted">Audit Verification:</span>
                 <span className="font-bold text-forest">
-                  {asset.dataWipeCompleted ? "✓ Certified Wiped" : "Pending Action"}
+                  {asset.dataWipeCompleted ? "✓ Certified Wiped" : "Pending Verification"}
                 </span>
               </div>
               <div className="flex items-center justify-between">
@@ -301,6 +423,14 @@ export default function AssetDetailsPage({ params }: AssetDetailsPageProps) {
           </div>
         </div>
       </div>
+
+      {/* Data Wipe Verification Modal */}
+      <DataWipeVerificationModal
+        asset={asset}
+        isOpen={isWipeModalOpen}
+        onClose={() => setIsWipeModalOpen(false)}
+        onVerified={handleWipeVerified}
+      />
     </div>
   );
 }
