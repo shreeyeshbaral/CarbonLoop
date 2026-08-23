@@ -39,6 +39,12 @@ export type CircularAction =
   | 'REDISTRIBUTE'
   | 'RECYCLE';
 
+export type UrgencyLevel =
+  | 'LOW'
+  | 'MEDIUM'
+  | 'HIGH'
+  | 'CRITICAL';
+
 export type DepartmentCode =
   | 'CSE'
   | 'MECH'
@@ -111,12 +117,13 @@ export interface ShortageRequest {
   category: AssetCategory;
   quantityRequested: number;
   quantityFulfilled: number;
-  urgency: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  urgency: UrgencyLevel;
   minimumCondition: AssetCondition;
   requestedBy: string;
   reason: string;
   status: 'OPEN' | 'MATCHED' | 'FULFILLED' | 'CANCELLED';
   createdAt: string;
+  updatedAt?: string;
 }
 
 export interface MatchOpportunity {
