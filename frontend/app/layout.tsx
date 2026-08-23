@@ -3,6 +3,7 @@ import { Poppins, Montserrat } from "next/font/google";
 import "leaflet/dist/leaflet.css";
 import "./globals.css";
 import { RoleProvider } from "@/context/RoleContext";
+import { AssetProvider } from "@/context/AssetContext";
 import { Navbar } from "@/components/layout/Navbar";
 
 const poppins = Poppins({
@@ -34,21 +35,23 @@ export default function RootLayout({
     <html lang="en" className={`${poppins.variable} ${montserrat.variable} bg-canvas text-ink`}>
       <body className="min-h-screen antialiased bg-canvas text-ink selection:bg-forest/20 selection:text-forest flex flex-col font-sans">
         <RoleProvider>
-          <Navbar />
-          <main className="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
-            {children}
-          </main>
-          <footer className="border-t border-border bg-surface py-6 mt-8 sm:mt-12 text-center text-xs text-ink-muted">
-            <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <span className="font-heading font-bold text-ink">CARBONLOOP</span>
-                <span>— ITER, Siksha 'O' Anusandhan University, Bhubaneswar</span>
+          <AssetProvider>
+            <Navbar />
+            <main className="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
+              {children}
+            </main>
+            <footer className="border-t border-border bg-surface py-6 mt-8 sm:mt-12 text-center text-xs text-ink-muted">
+              <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <span className="font-heading font-bold text-ink">CARBONLOOP</span>
+                  <span>— ITER, Siksha 'O' Anusandhan University, Bhubaneswar</span>
+                </div>
+                <div className="text-ink-muted">
+                  Engineered with Next.js, Node/Express, PostgreSQL, Python AI & OR-Tools
+                </div>
               </div>
-              <div className="text-ink-muted">
-                Engineered with Next.js, Node/Express, PostgreSQL, Python AI & OR-Tools
-              </div>
-            </div>
-          </footer>
+            </footer>
+          </AssetProvider>
         </RoleProvider>
       </body>
     </html>

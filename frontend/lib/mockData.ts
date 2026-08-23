@@ -2,15 +2,23 @@ import { Department, ImpactMetrics, CircularAction, AssetCategory } from "@/type
 
 // ===================================================
 // 1. CAMPUS DEPARTMENTS (Institute of Technical Education & Research - ITER, SOA University)
-// Calibrated Coordinates: Inside ITER Campus boundary (20.2470, 85.8012)
+// Exact Buildings Mapped from Official Campus Map:
+// - ITER Administrative Block
+// - Centre for Data Science & C-block
+// - Central Library
+// - D-block (ECE / Electronics)
+// - Bansuri Guru Auditorium & Media Wing (Design)
+// - F-Block & G-Block (Mechanical Labs)
+// - A-Block (Civil Engineering)
+// - S-Block / Sports & Discovery Center (Research)
 // ===================================================
 export const MOCK_DEPARTMENTS: Department[] = [
   {
     id: "dept-cse",
     code: "CSE",
-    name: "Computer Science & Engineering (ITER Block 1)",
-    building: "ITER Academic Block 1 (CSE/IT Complex)",
-    coordinates: { lat: 20.2482, lng: 85.8005, building: "ITER Academic Block 1", floor: "3rd Floor" },
+    name: "Computer Science & Centre for Data Science (C-block)",
+    building: "ITER Centre for Data Science & C-block",
+    coordinates: { lat: 20.2476, lng: 85.8010, building: "ITER Centre for Data Science", floor: "3rd Floor" },
     contactEmail: "cse.surplus@iter.soa.ac.in",
     managerName: "Prof. Priya Sharma",
     surplusCount: 38,
@@ -19,9 +27,9 @@ export const MOCK_DEPARTMENTS: Department[] = [
   {
     id: "dept-mech",
     code: "MECH",
-    name: "Mechanical Engineering (ITER Block 3)",
-    building: "ITER Mechanical & Thermal Labs Complex",
-    coordinates: { lat: 20.2468, lng: 85.8018, building: "ITER Mechanical Block", floor: "Ground Floor" },
+    name: "Mechanical Engineering (F-Block & G-Block)",
+    building: "ITER F-Block & G-Block Lab Complex",
+    coordinates: { lat: 20.2465, lng: 85.8018, building: "ITER F-Block", floor: "Ground Floor" },
     contactEmail: "mech.admin@iter.soa.ac.in",
     managerName: "Dr. Rajesh Kulkarni",
     surplusCount: 24,
@@ -30,9 +38,9 @@ export const MOCK_DEPARTMENTS: Department[] = [
   {
     id: "dept-ece",
     code: "ECE",
-    name: "Electronics & Communication (ITER Block 4)",
-    building: "ITER VLSI & Signal Processing Complex",
-    coordinates: { lat: 20.2478, lng: 85.8015, building: "ITER Block 4", floor: "2nd Floor" },
+    name: "Electronics & Communication (D-block)",
+    building: "ITER D-block (VLSI & Embedded Systems)",
+    coordinates: { lat: 20.2466, lng: 85.8003, building: "ITER D-block", floor: "2nd Floor" },
     contactEmail: "ece.stores@iter.soa.ac.in",
     managerName: "Dr. Arvind Swaminathan",
     surplusCount: 29,
@@ -41,9 +49,9 @@ export const MOCK_DEPARTMENTS: Department[] = [
   {
     id: "dept-civil",
     code: "CIVIL",
-    name: "Civil Engineering & Geotech (ITER Block 5)",
-    building: "ITER Structural & Eco-Materials Lab",
-    coordinates: { lat: 20.2460, lng: 85.8008, building: "ITER Block 5", floor: "1st Floor" },
+    name: "Civil Engineering & Geotech (A-Block)",
+    building: "ITER A-Block (Structural Materials Wing)",
+    coordinates: { lat: 20.2488, lng: 85.7996, building: "ITER A-Block", floor: "1st Floor" },
     contactEmail: "civil.procurement@iter.soa.ac.in",
     managerName: "Prof. Nandini Rao",
     surplusCount: 16,
@@ -52,9 +60,9 @@ export const MOCK_DEPARTMENTS: Department[] = [
   {
     id: "dept-design",
     code: "DESIGN",
-    name: "Design & Innovation Media Lab (ITER Block 6)",
-    building: "ITER Innovation & Media Pavilion",
-    coordinates: { lat: 20.2486, lng: 85.8019, building: "ITER Block 6", floor: "4th Floor" },
+    name: "Design & Innovation Studio (Bansuri Guru Wing)",
+    building: "Bansuri Guru Auditorium & Media Wing",
+    coordinates: { lat: 20.2475, lng: 85.8014, building: "Bansuri Guru Wing", floor: "2nd Floor" },
     contactEmail: "design.lab@iter.soa.ac.in",
     managerName: "Prof. Kabir Sen",
     surplusCount: 9,
@@ -63,9 +71,9 @@ export const MOCK_DEPARTMENTS: Department[] = [
   {
     id: "dept-library",
     code: "LIBRARY",
-    name: "Central Knowledge Resource Center",
-    building: "ITER Biju Patnaik Central Library Building",
-    coordinates: { lat: 20.2472, lng: 85.8010, building: "ITER Central Library", floor: "2nd Floor" },
+    name: "ITER Central Library",
+    building: "ITER Central Library Building",
+    coordinates: { lat: 20.2464, lng: 85.7997, building: "Central Library", floor: "2nd Floor" },
     contactEmail: "library.systems@iter.soa.ac.in",
     managerName: "Dr. Sunita Deshmukh",
     surplusCount: 42,
@@ -74,9 +82,9 @@ export const MOCK_DEPARTMENTS: Department[] = [
   {
     id: "dept-admin",
     code: "ADMIN",
-    name: "SOA Central Administration & Stores",
-    building: "SOA Administrative Bhavan, Main Entrance",
-    coordinates: { lat: 20.2458, lng: 85.8015, building: "SOA Central Bhavan", floor: "Ground Floor" },
+    name: "ITER Administrative Block & Central Stores",
+    building: "ITER Administrative Block (Main Complex)",
+    coordinates: { lat: 20.2482, lng: 85.8000, building: "ITER Admin Block", floor: "Ground Floor" },
     contactEmail: "central.stores@soa.ac.in",
     managerName: "Dr. Alok Verma",
     surplusCount: 65,
@@ -85,9 +93,9 @@ export const MOCK_DEPARTMENTS: Department[] = [
   {
     id: "dept-research",
     code: "RESEARCH",
-    name: "Center for Advanced Nanotech & AI",
-    building: "ITER Advanced Research & Discovery Center",
-    coordinates: { lat: 20.2475, lng: 85.8024, building: "ITER Research Block", floor: "3rd Floor" },
+    name: "Advanced Research & Nanotech Center (S-Block)",
+    building: "ITER S-Block & Innovation Center",
+    coordinates: { lat: 20.2466, lng: 85.8011, building: "ITER S-Block", floor: "3rd Floor" },
     contactEmail: "research.ops@iter.soa.ac.in",
     managerName: "Dr. Vikram Sethi",
     surplusCount: 14,
@@ -114,17 +122,17 @@ export const MOCK_IMPACT_METRICS: ImpactMetrics = {
 };
 
 // ===================================================
-// 3. CIRCULAR PATHWAYS BREAKDOWN (Strict warm palette: no blue/purple)
+// 3. CIRCULAR PATHWAYS BREAKDOWN
 // ===================================================
 export const MOCK_CIRCULAR_PATHWAYS = [
-  { name: "Reuse Direct", action: "REUSE", count: 86, percentage: 37, color: "#176B3A" },       // Forest Green
-  { name: "Internal Redistribute", action: "REDISTRIBUTE", count: 79, percentage: 34, color: "#2E9B59" }, // Leaf Green
-  { name: "Repair & Refurbish", action: "REPAIR", count: 42, percentage: 18, color: "#E98A3A" },   // Amber
-  { name: "Certified Recycle", action: "RECYCLE", count: 28, percentage: 11, color: "#6B716B" },    // Slate Gray
+  { name: "Reuse Direct", action: "REUSE", count: 86, percentage: 37, color: "#176B3A" },
+  { name: "Internal Redistribute", action: "REDISTRIBUTE", count: 79, percentage: 34, color: "#2E9B59" },
+  { name: "Repair & Refurbish", action: "REPAIR", count: 42, percentage: 18, color: "#E98A3A" },
+  { name: "Certified Recycle", action: "RECYCLE", count: 28, percentage: 11, color: "#6B716B" },
 ];
 
 // ===================================================
-// 4. DEPARTMENT IMBALANCE DATA (Surplus vs Shortage)
+// 4. DEPARTMENT IMBALANCE DATA
 // ===================================================
 export const MOCK_DEPARTMENT_IMBALANCES = [
   { department: "CSE", surplus: 38, shortage: 12, net: 26 },
@@ -162,8 +170,8 @@ export const MOCK_RECENT_ACTIVITIES: ActivityItem[] = [
     actionType: "DATA_WIPED",
     assetName: "Dell Latitude 5420 (i7, 16GB)",
     assetTag: "ASSET-CSE-104",
-    fromDept: "ITER CSE (Block 1)",
-    toDept: "ITER Design Lab (Block 6)",
+    fromDept: "Centre for Data Science (C-block)",
+    toDept: "Bansuri Guru Design Studio",
     savingsInr: 65000,
   },
   {
@@ -174,8 +182,8 @@ export const MOCK_RECENT_ACTIVITIES: ActivityItem[] = [
     actionType: "MATCH_APPROVED",
     assetName: "12x Herman Miller Ergonomic Chairs",
     assetTag: "ASSET-LIB-082",
-    fromDept: "ITER Central Library",
-    toDept: "ITER Research Block",
+    fromDept: "Central Library",
+    toDept: "S-Block Research Lab",
     savingsInr: 180000,
   },
   {
@@ -186,7 +194,7 @@ export const MOCK_RECENT_ACTIVITIES: ActivityItem[] = [
     actionType: "SURPLUS_REGISTERED",
     assetName: "5x HP LaserJet Enterprise Printers",
     assetTag: "ASSET-CSE-219",
-    fromDept: "ITER CSE (Block 1)",
+    fromDept: "Centre for Data Science (C-block)",
   },
   {
     id: "act-04",
@@ -196,8 +204,8 @@ export const MOCK_RECENT_ACTIVITIES: ActivityItem[] = [
     actionType: "IN_TRANSIT",
     assetName: "3x Epson 4K Interactive Projectors",
     assetTag: "ASSET-ADM-044",
-    fromDept: "SOA Admin Bhavan",
-    toDept: "ITER Civil (Block 5)",
+    fromDept: "ITER Administrative Block",
+    toDept: "A-Block Civil Engineering",
     savingsInr: 120000,
   },
   {
@@ -208,8 +216,8 @@ export const MOCK_RECENT_ACTIVITIES: ActivityItem[] = [
     actionType: "DELIVERED",
     assetName: "4x BenQ 27-inch Color-Accurate Monitors",
     assetTag: "ASSET-ECE-302",
-    fromDept: "ITER ECE (Block 4)",
-    toDept: "ITER Design Studio (Block 6)",
+    fromDept: "D-block (ECE)",
+    toDept: "Bansuri Guru Wing",
     savingsInr: 96000,
   },
 ];

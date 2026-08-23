@@ -64,62 +64,64 @@ export function ResourceMapCanvas({
     });
   }, []);
 
-  // Active Transfer Routes inside ITER Campus Boundary
+  // Active Transfer Routes across exact ITER buildings:
+  // - C-block (Data Science)
+  // - D-block (ECE)
+  // - Bansuri Guru Wing (Design)
+  // - Central Library
+  // - ITER Admin Block
   const transferRoutes: TransferRoute[] = [
     {
       id: "rt-01",
-      sourceDept: MOCK_DEPARTMENTS[0], // CSE (Block 1)
-      targetDept: MOCK_DEPARTMENTS[4], // Design (Block 6)
+      sourceDept: MOCK_DEPARTMENTS[0], // C-block Data Science
+      targetDept: MOCK_DEPARTMENTS[4], // Bansuri Guru Design
       assetName: "4x Dell Latitude 5420 Laptops",
       quantity: 4,
       status: "In Transit",
-      driverEta: "3 mins",
+      driverEta: "2 mins",
       coordinates: [
-        [20.2482, 85.8005],
-        [20.2484, 85.8012],
-        [20.2486, 85.8019],
+        [20.2476, 85.8010],
+        [20.2475, 85.8014],
       ],
     },
     {
       id: "rt-02",
-      sourceDept: MOCK_DEPARTMENTS[2], // ECE (Block 4)
-      targetDept: MOCK_DEPARTMENTS[4], // Design (Block 6)
+      sourceDept: MOCK_DEPARTMENTS[2], // D-block ECE
+      targetDept: MOCK_DEPARTMENTS[4], // Bansuri Guru Design
       assetName: "2x BenQ 4K Color Monitors",
       quantity: 2,
       status: "Scheduled",
-      driverEta: "4 mins",
+      driverEta: "3 mins",
       coordinates: [
-        [20.2478, 85.8015],
-        [20.2482, 85.8017],
-        [20.2486, 85.8019],
+        [20.2466, 85.8003],
+        [20.2471, 85.8008],
+        [20.2475, 85.8014],
       ],
     },
     {
       id: "rt-03",
-      sourceDept: MOCK_DEPARTMENTS[6], // SOA Admin Bhavan
-      targetDept: MOCK_DEPARTMENTS[3], // Civil (Block 5)
+      sourceDept: MOCK_DEPARTMENTS[6], // ITER Admin Block
+      targetDept: MOCK_DEPARTMENTS[3], // A-Block Civil
       assetName: "1x Epson Interactive Projector",
       quantity: 1,
       status: "Loading",
       driverEta: "2 mins",
       coordinates: [
-        [20.2458, 85.8015],
-        [20.2459, 85.8010],
-        [20.2460, 85.8008],
+        [20.2482, 85.8000],
+        [20.2488, 85.7996],
       ],
     },
     {
       id: "rt-04",
-      sourceDept: MOCK_DEPARTMENTS[5], // Library
-      targetDept: MOCK_DEPARTMENTS[7], // Research Discovery Center
+      sourceDept: MOCK_DEPARTMENTS[5], // Central Library
+      targetDept: MOCK_DEPARTMENTS[7], // S-Block Research
       assetName: "6x Ergonomic Aeron Chairs",
       quantity: 6,
       status: "In Transit",
       driverEta: "3 mins",
       coordinates: [
-        [20.2472, 85.8010],
-        [20.2473, 85.8018],
-        [20.2475, 85.8024],
+        [20.2464, 85.7997],
+        [20.2466, 85.8011],
       ],
     },
   ];
@@ -166,11 +168,11 @@ export function ResourceMapCanvas({
   });
 
   return (
-    <div className="w-full h-full min-h-[580px] rounded-3xl overflow-hidden border border-border relative bg-surfaceSubtle shadow-card">
+    <div className="w-full h-full min-h-[380px] sm:min-h-[480px] lg:min-h-[580px] rounded-3xl overflow-hidden border border-border relative bg-surfaceSubtle shadow-card">
       {isMounted && L ? (
         <MapContainer
-          center={[20.2472, 85.8012]}
-          zoom={17}
+          center={[20.2474, 85.8008]}
+          zoom={18}
           scrollWheelZoom={true}
           className="w-full h-full"
         >

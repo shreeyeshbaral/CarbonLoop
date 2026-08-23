@@ -38,7 +38,7 @@ export function CampusMapWidget() {
   const createCustomIcon = (surplus: number, shortage: number) => {
     if (!L) return undefined;
     const isNetSurplus = surplus >= shortage;
-    const bgColor = isNetSurplus ? "#176B3A" : "#E98A3A"; // Forest Green or Amber
+    const bgColor = isNetSurplus ? "#176B3A" : "#E98A3A";
 
     return L.divIcon({
       className: "custom-map-pin",
@@ -71,10 +71,10 @@ export function CampusMapWidget() {
         <div>
           <h3 className="font-heading text-base font-bold text-ink flex items-center gap-2">
             <MapPin className="w-4 h-4 text-forest" />
-            ITER SOA Campus Geospatial Preview
+            ITER SOA Campus Geospatial Distribution
           </h3>
           <p className="text-xs text-ink-muted">
-            Live inventory nodes inside ITER academic blocks (Jagamara, Bhubaneswar).
+            Live surplus & shortage nodes across ITER academic blocks (C-block, D-block, Central Library, Admin Block).
           </p>
         </div>
 
@@ -90,8 +90,8 @@ export function CampusMapWidget() {
       <div className="w-full h-80 rounded-xl overflow-hidden border border-border relative bg-surfaceSubtle">
         {isMounted && L ? (
           <MapContainer
-            center={[20.2472, 85.8012]}
-            zoom={17}
+            center={[20.2474, 85.8008]}
+            zoom={18}
             scrollWheelZoom={false}
             className="w-full h-full"
           >
@@ -152,7 +152,7 @@ export function CampusMapWidget() {
             <span className="font-medium text-ink">Net Shortage Zone</span>
           </div>
         </div>
-        <span className="text-[11px]">Institute of Technical Education & Research Campus</span>
+        <span className="text-[11px]">ITER Campus (Jagamara, Khandagiri)</span>
       </div>
     </div>
   );

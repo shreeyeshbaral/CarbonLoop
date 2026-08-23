@@ -14,13 +14,13 @@ import {
 } from "lucide-react";
 import { AssetCard } from "@/components/assets/AssetCard";
 import { RegisterAssetModal } from "@/components/assets/RegisterAssetModal";
-import { MOCK_ASSETS } from "@/lib/mockAssets";
+import { useAssets } from "@/context/AssetContext";
 import { MOCK_DEPARTMENTS } from "@/lib/mockData";
 import { Asset, AssetCategory, AssetCondition, CircularAction } from "@/types";
 import { formatCurrency } from "@/lib/utils";
 
 export default function AssetsMarketplacePage() {
-  const [assets, setAssets] = useState<Asset[]>(MOCK_ASSETS);
+  const { assets, addAsset } = useAssets();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
   const [selectedDept, setSelectedDept] = useState<string>("ALL");
@@ -78,8 +78,8 @@ export default function AssetsMarketplacePage() {
     setTimeout(() => setClaimToast(null), 5000);
   };
 
-  const handleNewAssetCreated = (newAsset: Asset) => {
-    setAssets([newAsset, ...assets]);
+  const handleNewAssetCreated = (newAssetData: Asset) => {
+    addAsset(newAssetData);
   };
 
   return (
@@ -97,13 +97,13 @@ export default function AssetsMarketplacePage() {
         <div>
           <div className="flex items-center gap-2 text-xs font-semibold text-forest uppercase tracking-wider mb-1">
             <Boxes className="w-4 h-4" />
-            Internal Surplus Exchange
+            Internal Surplus & E-Waste Exchange
           </div>
           <h1 className="font-heading text-2xl sm:text-3xl font-extrabold text-ink tracking-tight">
             Institutional Asset Marketplace
           </h1>
           <p className="text-sm text-ink-muted mt-1">
-            Search, claim, and redeploy surplus hardware and laboratory assets across campus departments.
+            Search, claim, edit, and redeploy surplus hardware and laboratory assets across ITER campus departments.
           </p>
         </div>
 
@@ -112,7 +112,7 @@ export default function AssetsMarketplacePage() {
           className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-forest text-surface font-semibold text-xs sm:text-sm hover:bg-forest-dark transition-all shadow-xs"
         >
           <PlusCircle className="w-4 h-4" />
-          Declare Surplus Asset
+          Declare Surplus Asset / E-Waste
         </button>
       </div>
 
