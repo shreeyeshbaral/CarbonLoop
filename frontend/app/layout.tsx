@@ -6,6 +6,7 @@ import { RoleProvider } from "@/context/RoleContext";
 import { AssetProvider } from "@/context/AssetContext";
 import { ShortageProvider } from "@/context/ShortageContext";
 import { Navbar } from "@/components/layout/Navbar";
+import { AICopilotWidget } from "@/components/ai/AICopilotWidget";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -53,6 +54,9 @@ export default function RootLayout({
                   </div>
                 </div>
               </footer>
+
+              {/* Global Floating AI Copilot Widget */}
+              <AICopilotWidget />
             </ShortageProvider>
           </AssetProvider>
         </RoleProvider>
