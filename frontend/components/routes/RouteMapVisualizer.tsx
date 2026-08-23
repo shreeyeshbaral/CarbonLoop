@@ -50,7 +50,7 @@ export function RouteMapVisualizer({
 
     const isDepot = stop.type === "DEPOT";
     const isPickup = stop.type === "PICKUP";
-    const bgColor = isDepot ? "#18201B" : isPickup ? "#176B3A" : "#E98A3A"; // Charcoal for Depot, Forest for Pickup, Amber for Delivery
+    const bgColor = isDepot ? "#18201B" : isPickup ? "#176B3A" : "#E98A3A";
     const label = isDepot ? (index === 0 ? "Depot" : "End") : `${index}`;
 
     return L.divIcon({
@@ -83,13 +83,13 @@ export function RouteMapVisualizer({
     <div className="w-full h-full min-h-[500px] rounded-3xl overflow-hidden border border-border relative bg-surfaceSubtle shadow-card">
       {isMounted && L ? (
         <MapContainer
-          center={[20.2520, 85.7980]}
-          zoom={16}
+          center={[20.2472, 85.8012]}
+          zoom={17}
           scrollWheelZoom={true}
           className="w-full h-full"
         >
           <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | ITER SOA Bhubaneswar'
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | ITER SOA Campus'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
 

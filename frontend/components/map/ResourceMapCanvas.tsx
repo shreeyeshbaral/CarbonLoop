@@ -64,7 +64,7 @@ export function ResourceMapCanvas({
     });
   }, []);
 
-  // Active Transfer Routes for ITER Campus Logistics Mode
+  // Active Transfer Routes inside ITER Campus Boundary
   const transferRoutes: TransferRoute[] = [
     {
       id: "rt-01",
@@ -73,11 +73,11 @@ export function ResourceMapCanvas({
       assetName: "4x Dell Latitude 5420 Laptops",
       quantity: 4,
       status: "In Transit",
-      driverEta: "5 mins",
+      driverEta: "3 mins",
       coordinates: [
-        [20.2525, 85.7972],
-        [20.2533, 85.7969],
-        [20.2542, 85.7965],
+        [20.2482, 85.8005],
+        [20.2484, 85.8012],
+        [20.2486, 85.8019],
       ],
     },
     {
@@ -87,11 +87,11 @@ export function ResourceMapCanvas({
       assetName: "2x BenQ 4K Color Monitors",
       quantity: 2,
       status: "Scheduled",
-      driverEta: "8 mins",
+      driverEta: "4 mins",
       coordinates: [
-        [20.2536, 85.7985],
-        [20.2540, 85.7975],
-        [20.2542, 85.7965],
+        [20.2478, 85.8015],
+        [20.2482, 85.8017],
+        [20.2486, 85.8019],
       ],
     },
     {
@@ -101,11 +101,11 @@ export function ResourceMapCanvas({
       assetName: "1x Epson Interactive Projector",
       quantity: 1,
       status: "Loading",
-      driverEta: "6 mins",
+      driverEta: "2 mins",
       coordinates: [
-        [20.2508, 85.7978],
-        [20.2506, 85.7972],
-        [20.2505, 85.7968],
+        [20.2458, 85.8015],
+        [20.2459, 85.8010],
+        [20.2460, 85.8008],
       ],
     },
     {
@@ -115,11 +115,11 @@ export function ResourceMapCanvas({
       assetName: "6x Ergonomic Aeron Chairs",
       quantity: 6,
       status: "In Transit",
-      driverEta: "7 mins",
+      driverEta: "3 mins",
       coordinates: [
-        [20.2518, 85.7982],
-        [20.2524, 85.7988],
-        [20.2530, 85.7995],
+        [20.2472, 85.8010],
+        [20.2473, 85.8018],
+        [20.2475, 85.8024],
       ],
     },
   ];
@@ -131,7 +131,6 @@ export function ResourceMapCanvas({
     const isNetSurplus = surplus >= shortage;
     const isSelected = selectedDepartment?.id === dept.id;
 
-    // Strict color rules: Forest Green for Surplus, Amber for Shortage
     const bgColor = isNetSurplus ? "#176B3A" : "#E98A3A";
 
     return L.divIcon({
@@ -160,7 +159,6 @@ export function ResourceMapCanvas({
     });
   };
 
-  // Filter departments based on active layer
   const filteredDepartments = departments.filter((d) => {
     if (activeFilter === "SURPLUS_ONLY") return (d.surplusCount || 0) >= (d.shortageCount || 0);
     if (activeFilter === "SHORTAGE_ONLY") return (d.shortageCount || 0) > (d.surplusCount || 0);
@@ -171,13 +169,13 @@ export function ResourceMapCanvas({
     <div className="w-full h-full min-h-[580px] rounded-3xl overflow-hidden border border-border relative bg-surfaceSubtle shadow-card">
       {isMounted && L ? (
         <MapContainer
-          center={[20.2520, 85.7980]}
-          zoom={16}
+          center={[20.2472, 85.8012]}
+          zoom={17}
           scrollWheelZoom={true}
           className="w-full h-full"
         >
           <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | ITER SOA Bhubaneswar'
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | Institute of Technical Education & Research (ITER)'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
 

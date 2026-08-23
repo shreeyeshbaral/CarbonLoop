@@ -1,8 +1,8 @@
 import { Department, ImpactMetrics, CircularAction, AssetCategory } from "@/types";
 
 // ===================================================
-// 1. CAMPUS DEPARTMENTS (ITER, Siksha 'O' Anusandhan University, Bhubaneswar)
-// Center Coordinates: (20.2520, 85.7980) - Jagamara / Khandagiri Campus
+// 1. CAMPUS DEPARTMENTS (Institute of Technical Education & Research - ITER, SOA University)
+// Calibrated Coordinates: Inside ITER Campus boundary (20.2470, 85.8012)
 // ===================================================
 export const MOCK_DEPARTMENTS: Department[] = [
   {
@@ -10,7 +10,7 @@ export const MOCK_DEPARTMENTS: Department[] = [
     code: "CSE",
     name: "Computer Science & Engineering (ITER Block 1)",
     building: "ITER Academic Block 1 (CSE/IT Complex)",
-    coordinates: { lat: 20.2525, lng: 85.7972, building: "ITER Academic Block 1", floor: "3rd Floor" },
+    coordinates: { lat: 20.2482, lng: 85.8005, building: "ITER Academic Block 1", floor: "3rd Floor" },
     contactEmail: "cse.surplus@iter.soa.ac.in",
     managerName: "Prof. Priya Sharma",
     surplusCount: 38,
@@ -21,7 +21,7 @@ export const MOCK_DEPARTMENTS: Department[] = [
     code: "MECH",
     name: "Mechanical Engineering (ITER Block 3)",
     building: "ITER Mechanical & Thermal Labs Complex",
-    coordinates: { lat: 20.2512, lng: 85.7990, building: "ITER Mechanical Block", floor: "Ground Floor" },
+    coordinates: { lat: 20.2468, lng: 85.8018, building: "ITER Mechanical Block", floor: "Ground Floor" },
     contactEmail: "mech.admin@iter.soa.ac.in",
     managerName: "Dr. Rajesh Kulkarni",
     surplusCount: 24,
@@ -32,7 +32,7 @@ export const MOCK_DEPARTMENTS: Department[] = [
     code: "ECE",
     name: "Electronics & Communication (ITER Block 4)",
     building: "ITER VLSI & Signal Processing Complex",
-    coordinates: { lat: 20.2536, lng: 85.7985, building: "ITER Block 4", floor: "2nd Floor" },
+    coordinates: { lat: 20.2478, lng: 85.8015, building: "ITER Block 4", floor: "2nd Floor" },
     contactEmail: "ece.stores@iter.soa.ac.in",
     managerName: "Dr. Arvind Swaminathan",
     surplusCount: 29,
@@ -43,7 +43,7 @@ export const MOCK_DEPARTMENTS: Department[] = [
     code: "CIVIL",
     name: "Civil Engineering & Geotech (ITER Block 5)",
     building: "ITER Structural & Eco-Materials Lab",
-    coordinates: { lat: 20.2505, lng: 85.7968, building: "ITER Block 5", floor: "1st Floor" },
+    coordinates: { lat: 20.2460, lng: 85.8008, building: "ITER Block 5", floor: "1st Floor" },
     contactEmail: "civil.procurement@iter.soa.ac.in",
     managerName: "Prof. Nandini Rao",
     surplusCount: 16,
@@ -54,7 +54,7 @@ export const MOCK_DEPARTMENTS: Department[] = [
     code: "DESIGN",
     name: "Design & Innovation Media Lab (ITER Block 6)",
     building: "ITER Innovation & Media Pavilion",
-    coordinates: { lat: 20.2542, lng: 85.7965, building: "ITER Block 6", floor: "4th Floor" },
+    coordinates: { lat: 20.2486, lng: 85.8019, building: "ITER Block 6", floor: "4th Floor" },
     contactEmail: "design.lab@iter.soa.ac.in",
     managerName: "Prof. Kabir Sen",
     surplusCount: 9,
@@ -65,7 +65,7 @@ export const MOCK_DEPARTMENTS: Department[] = [
     code: "LIBRARY",
     name: "Central Knowledge Resource Center",
     building: "ITER Biju Patnaik Central Library Building",
-    coordinates: { lat: 20.2518, lng: 85.7982, building: "ITER Central Library", floor: "2nd Floor" },
+    coordinates: { lat: 20.2472, lng: 85.8010, building: "ITER Central Library", floor: "2nd Floor" },
     contactEmail: "library.systems@iter.soa.ac.in",
     managerName: "Dr. Sunita Deshmukh",
     surplusCount: 42,
@@ -75,8 +75,8 @@ export const MOCK_DEPARTMENTS: Department[] = [
     id: "dept-admin",
     code: "ADMIN",
     name: "SOA Central Administration & Stores",
-    building: "SOA Administrative Bhavan, Khandagiri Road",
-    coordinates: { lat: 20.2508, lng: 85.7978, building: "SOA Central Bhavan", floor: "Ground Floor" },
+    building: "SOA Administrative Bhavan, Main Entrance",
+    coordinates: { lat: 20.2458, lng: 85.8015, building: "SOA Central Bhavan", floor: "Ground Floor" },
     contactEmail: "central.stores@soa.ac.in",
     managerName: "Dr. Alok Verma",
     surplusCount: 65,
@@ -87,7 +87,7 @@ export const MOCK_DEPARTMENTS: Department[] = [
     code: "RESEARCH",
     name: "Center for Advanced Nanotech & AI",
     building: "ITER Advanced Research & Discovery Center",
-    coordinates: { lat: 20.2530, lng: 85.7995, building: "ITER Research Block", floor: "3rd Floor" },
+    coordinates: { lat: 20.2475, lng: 85.8024, building: "ITER Research Block", floor: "3rd Floor" },
     contactEmail: "research.ops@iter.soa.ac.in",
     managerName: "Dr. Vikram Sethi",
     surplusCount: 14,

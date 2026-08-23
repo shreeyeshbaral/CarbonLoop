@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import "leaflet/dist/leaflet.css";
 import "./globals.css";
 import { RoleProvider } from "@/context/RoleContext";
 import { Navbar } from "@/components/layout/Navbar";
@@ -6,7 +7,7 @@ import { Navbar } from "@/components/layout/Navbar";
 export const metadata: Metadata = {
   title: "CarbonLoop | Turning Institutional Surplus into Circular Value",
   description:
-    "Institutional circular asset management, reverse logistics, and internal surplus redistribution platform.",
+    "Institutional circular asset management, reverse logistics, and internal surplus redistribution platform for ITER SOA University, Bhubaneswar.",
 };
 
 export default function RootLayout({
@@ -23,6 +24,10 @@ export default function RootLayout({
           href="https://fonts.gstatic.com"
           crossOrigin="anonymous"
         />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Poppins:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet"
+        />
       </head>
       <body className="min-h-screen antialiased bg-canvas text-ink selection:bg-forest/20 selection:text-forest flex flex-col">
         <RoleProvider>
@@ -34,7 +39,7 @@ export default function RootLayout({
             <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <span className="font-heading font-bold text-ink">CARBONLOOP</span>
-                <span>— Institutional Reverse Logistics & ESG Circularity Platform</span>
+                <span>— ITER, Siksha 'O' Anusandhan University, Bhubaneswar</span>
               </div>
               <div className="text-ink-muted">
                 Engineered with Next.js, Node/Express, PostgreSQL, Python AI & OR-Tools

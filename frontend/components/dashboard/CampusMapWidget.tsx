@@ -74,7 +74,7 @@ export function CampusMapWidget() {
             ITER SOA Campus Geospatial Preview
           </h3>
           <p className="text-xs text-ink-muted">
-            Live inventory nodes across ITER academic blocks (Jagamara, Bhubaneswar).
+            Live inventory nodes inside ITER academic blocks (Jagamara, Bhubaneswar).
           </p>
         </div>
 
@@ -90,13 +90,13 @@ export function CampusMapWidget() {
       <div className="w-full h-80 rounded-xl overflow-hidden border border-border relative bg-surfaceSubtle">
         {isMounted && L ? (
           <MapContainer
-            center={[20.2520, 85.7980]}
-            zoom={16}
+            center={[20.2472, 85.8012]}
+            zoom={17}
             scrollWheelZoom={false}
             className="w-full h-full"
           >
             <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | ITER SOA Campus'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
             {MOCK_DEPARTMENTS.map((dept) => (
@@ -152,7 +152,7 @@ export function CampusMapWidget() {
             <span className="font-medium text-ink">Net Shortage Zone</span>
           </div>
         </div>
-        <span className="text-[11px]">Khandagiri / Jagamara Campus</span>
+        <span className="text-[11px]">Institute of Technical Education & Research Campus</span>
       </div>
     </div>
   );
