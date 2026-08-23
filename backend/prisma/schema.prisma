@@ -1,0 +1,271 @@
+// ===================================================
+// CARBONLOOP — Prisma Relational Database Schema
+// ===================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------
+// ENUMS
+// ---------------------------------------------------
+
+enum AssetCategory {
+  LAPTOP
+  MONITOR
+  DESKTOP
+  CHAIR
+  DESK
+  PROJECTOR
+  PRINTER
+  LAB_EQUIPMENT
+  NETWORKING
+  OTHER
+}
+
+enum AssetCondition {
+  EXCELLENT
+  GOOD
+  FAIR
+  POOR
+  FOR_PARTS
+}
+
+enum AssetStatus {
+  AVAILABLE
+  REQUESTED
+  IN_REVIEW
+  APPROVED
+  DATA_WIPE_PENDING
+  DATA_WIPED
+  TRANSFER_SCHEDULED
+  IN_TRANSIT
+  TRANSFERRED
+  RECYCLED
+}
+
+enum CircularAction {
+  REUSE
+  REPAIR
+  REDISTRIBUTE
+  RECYCLE
+}
+
+enum UrgencyLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum RequestStatus {
+  OPEN
+  MATCHED
+  FULFILLED
+  CANCELLED
+}
+
+enum MatchStatus {
+  PROPOSED
+  REQUESTED
+  APPROVED
+  REJECTED
+}
+
+enum UserRole {
+  ADMIN
+  DEPARTMENT_MANAGER
+  IT_OFFICER
+  REQUESTER
+}
+
+// ---------------------------------------------------
+// MODELS
+// ---------------------------------------------------
+
+model Department {
+  id           String   @id @default(uuid())
+  code         String   @unique // CSE, MECH, ECE, CIVIL, DESIGN, LIBRARY, ADMIN, RESEARCH
+  name         String
+  building     String
+  floor        String?
+  room         String?
+  lat          Float
+  lng          Float
+  contactEmail String
+  managerName  String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  assets             Asset[]
+  shortageRequests   ShortageRequest[]
+  outgoingMatches    MatchOpportunity[] @relation("SourceDeptMatches")
+  incomingMatches    MatchOpportunity[] @relation("TargetDeptMatches")
+  outgoingTransfers  Transfer[]         @relation("SourceDeptTransfers")
+  incomingTransfers  Transfer[]         @relation("TargetDeptTransfers")
+
+  @@index([code])
+}
+
+model Asset {
+  id                   String         @id @default(uuid())
+  assetTag             String         @unique // e.g. ASSET-CSE-104
+  name                 String
+  category             AssetCategory
+  condition            AssetCondition
+  departmentId         String
+  department           Department     @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+  building             String
+  floor                String?
+  room                 String?
+  lat                  Float
+  lng                  Float
+  ageYears             Float          @default(1.0)
+  purchaseDate         DateTime?
+  originalPrice        Int            // Stored in INR (Paise / direct Rupees)
+  estimatedValue       Int
+  estimatedRepairCost  Int            @default(0)
+  status               AssetStatus    @default(AVAILABLE)
+  dataWipeRequired     Boolean        @default(false)
+  dataWipeCompleted    Boolean        @default(false)
+  recommendedAction    CircularAction @default(REUSE)
+  actionConfidence     Float          @default(0.9)
+  aiReasoning          String?
+  serialNumber         String?
+  manufacturer         String?
+  modelNumber          String?
+  specifications       Json?
+  tags                 String[]       @default([])
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+
+  dataWipeAudit        DataWipeAudit?
+  matchOpportunities   MatchOpportunity[]
+  transfers            Transfer[]
+
+  @@index([departmentId])
+  @@index([status])
+  @@index([category])
+  @@index([recommendedAction])
+}
+
+model DataWipeAudit {
+  id                    String    @id @default(uuid())
+  assetId               String    @unique
+  asset                 Asset     @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  officerName           String
+  officerEmail          String
+  wipeMethod            String    // e.g. NIST 800-88 Clear / Cryptographic Erase
+  verificationCertId    String    @unique
+  certificateHash       String?
+  status                String    @default("COMPLETED")
+  completionTimestamp   DateTime  @default(now())
+  notes                 String?
+
+  @@index([assetId])
+  @@index([verificationCertId])
+}
+
+model ShortageRequest {
+  id                 String         @id @default(uuid())
+  departmentId       String
+  department         Department     @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+  category           AssetCategory
+  quantityRequested  Int            @default(1)
+  quantityFulfilled  Int            @default(0)
+  urgency            UrgencyLevel   @default(MEDIUM)
+  minimumCondition   AssetCondition @default(GOOD)
+  requestedBy        String
+  reason             String
+  status             RequestStatus  @default(OPEN)
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+
+  matchOpportunities MatchOpportunity[]
+
+  @@index([departmentId])
+  @@index([status])
+  @@index([category])
+}
+
+model MatchOpportunity {
+  id                   String          @id @default(uuid())
+  assetId              String
+  asset                Asset           @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  requestId            String
+  request              ShortageRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  sourceDepartmentId   String
+  sourceDepartment     Department      @relation("SourceDeptMatches", fields: [sourceDepartmentId], references: [id], onDelete: Restrict)
+  targetDepartmentId   String
+  targetDepartment     Department      @relation("TargetDeptMatches", fields: [targetDepartmentId], references: [id], onDelete: Restrict)
+  matchScore           Int             // 0 - 100
+  compatibilityScore   Int             // 0 - 40
+  conditionScore       Int             // 0 - 25
+  proximityScore       Int             // 0 - 20
+  urgencyScore         Int             // 0 - 15
+  distanceKm           Float
+  procurementAvoided   Int
+  co2AvoidedKg         Float
+  reasons              String[]
+  status               MatchStatus     @default(PROPOSED)
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+
+  @@index([assetId])
+  @@index([requestId])
+  @@index([status])
+}
+
+model Transfer {
+  id                 String      @id @default(uuid())
+  assetId            String
+  asset              Asset       @relation(fields: [assetId], references: [id], onDelete: Restrict)
+  sourceDepartmentId String
+  sourceDepartment   Department  @relation("SourceDeptTransfers", fields: [sourceDepartmentId], references: [id], onDelete: Restrict)
+  targetDepartmentId String
+  targetDepartment   Department  @relation("TargetDeptTransfers", fields: [targetDepartmentId], references: [id], onDelete: Restrict)
+  status             AssetStatus @default(IN_REVIEW)
+  approvedBy         String?
+  approvedAt         DateTime?
+  scheduledPickup    DateTime?
+  completedAt        DateTime?
+  routeOrderId       Int?
+  notes              String?
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+
+  @@index([assetId])
+  @@index([status])
+}
+
+model ImpactFactorConfig {
+  id              String        @id @default(uuid())
+  category        AssetCategory @unique
+  avgWeightKg     Float         // e.g. Laptop = 2.2 kg, Monitor = 5.5 kg
+  embodiedCo2Kg   Float         // e.g. Laptop = 250 kg CO2e, Chair = 45 kg CO2e
+  avgNewPriceInr  Int           // Benchmark new replacement procurement cost
+  repairFactor    Float         @default(0.15) // Approx 15% cost for repair
+  active          Boolean       @default(true)
+  updatedAt       DateTime      @updatedAt
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  timestamp  DateTime @default(now())
+  actorName  String
+  actorRole  UserRole
+  actionType String   // e.g. ASSET_CREATED, MATCH_APPROVED, DATA_WIPE_VERIFIED
+  entityType String   // ASSET, TRANSFER, REQUEST, MATCH
+  entityId   String
+  details    Json?
+  ipAddress  String?
+
+  @@index([timestamp])
+  @@index([entityId])
+  @@index([actionType])
+}
