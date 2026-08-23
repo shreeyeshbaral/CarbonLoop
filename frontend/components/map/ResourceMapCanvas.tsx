@@ -64,62 +64,62 @@ export function ResourceMapCanvas({
     });
   }, []);
 
-  // Active Transfer Routes for Logistics Mode
+  // Active Transfer Routes for ITER Campus Logistics Mode
   const transferRoutes: TransferRoute[] = [
     {
       id: "rt-01",
-      sourceDept: MOCK_DEPARTMENTS[0], // CSE
-      targetDept: MOCK_DEPARTMENTS[4], // Design
+      sourceDept: MOCK_DEPARTMENTS[0], // CSE (Block 1)
+      targetDept: MOCK_DEPARTMENTS[4], // Design (Block 6)
       assetName: "4x Dell Latitude 5420 Laptops",
       quantity: 4,
       status: "In Transit",
-      driverEta: "8 mins",
+      driverEta: "5 mins",
       coordinates: [
-        [12.9722, 77.5935],
-        [12.9731, 77.5930],
-        [12.9740, 77.5925],
+        [20.2525, 85.7972],
+        [20.2533, 85.7969],
+        [20.2542, 85.7965],
       ],
     },
     {
       id: "rt-02",
-      sourceDept: MOCK_DEPARTMENTS[2], // ECE
-      targetDept: MOCK_DEPARTMENTS[4], // Design
+      sourceDept: MOCK_DEPARTMENTS[2], // ECE (Block 4)
+      targetDept: MOCK_DEPARTMENTS[4], // Design (Block 6)
       assetName: "2x BenQ 4K Color Monitors",
       quantity: 2,
       status: "Scheduled",
-      driverEta: "25 mins",
+      driverEta: "8 mins",
       coordinates: [
-        [12.9735, 77.5955],
-        [12.9738, 77.5940],
-        [12.9740, 77.5925],
+        [20.2536, 85.7985],
+        [20.2540, 85.7975],
+        [20.2542, 85.7965],
       ],
     },
     {
       id: "rt-03",
-      sourceDept: MOCK_DEPARTMENTS[6], // Admin
-      targetDept: MOCK_DEPARTMENTS[3], // Civil
+      sourceDept: MOCK_DEPARTMENTS[6], // SOA Admin Bhavan
+      targetDept: MOCK_DEPARTMENTS[3], // Civil (Block 5)
       assetName: "1x Epson Interactive Projector",
       quantity: 1,
       status: "Loading",
-      driverEta: "15 mins",
+      driverEta: "6 mins",
       coordinates: [
-        [12.9702, 77.5952],
-        [12.9698, 77.5941],
-        [12.9695, 77.5930],
+        [20.2508, 85.7978],
+        [20.2506, 85.7972],
+        [20.2505, 85.7968],
       ],
     },
     {
       id: "rt-04",
       sourceDept: MOCK_DEPARTMENTS[5], // Library
-      targetDept: MOCK_DEPARTMENTS[7], // Research
+      targetDept: MOCK_DEPARTMENTS[7], // Research Discovery Center
       assetName: "6x Ergonomic Aeron Chairs",
       quantity: 6,
       status: "In Transit",
-      driverEta: "12 mins",
+      driverEta: "7 mins",
       coordinates: [
-        [12.9715, 77.5948],
-        [12.9723, 77.5959],
-        [12.9730, 77.5970],
+        [20.2518, 85.7982],
+        [20.2524, 85.7988],
+        [20.2530, 85.7995],
       ],
     },
   ];
@@ -171,13 +171,13 @@ export function ResourceMapCanvas({
     <div className="w-full h-full min-h-[580px] rounded-3xl overflow-hidden border border-border relative bg-surfaceSubtle shadow-card">
       {isMounted && L ? (
         <MapContainer
-          center={[12.9716, 77.5946]}
-          zoom={15}
+          center={[20.2520, 85.7980]}
+          zoom={16}
           scrollWheelZoom={true}
           className="w-full h-full"
         >
           <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | ITER SOA Bhubaneswar'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
 
@@ -235,7 +235,7 @@ export function ResourceMapCanvas({
                   <div className="p-1 text-xs space-y-1">
                     <div className="font-bold text-forest flex items-center gap-1">
                       <Truck className="w-3.5 h-3.5" />
-                      Active Reverse Logistics
+                      ITER Campus Van Route
                     </div>
                     <p className="font-semibold text-ink">{rt.assetName}</p>
                     <p className="text-ink-muted text-[11px]">
@@ -252,7 +252,7 @@ export function ResourceMapCanvas({
       ) : (
         <div className="w-full h-full flex flex-col items-center justify-center text-xs text-ink-muted gap-2">
           <div className="w-7 h-7 border-2 border-forest border-t-transparent rounded-full animate-spin"></div>
-          <span>Rendering geospatial coordinate matrix...</span>
+          <span>Rendering geospatial coordinate matrix for ITER SOA Bhubaneswar...</span>
         </div>
       )}
     </div>

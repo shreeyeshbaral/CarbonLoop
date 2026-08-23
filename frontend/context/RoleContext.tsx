@@ -21,9 +21,9 @@ export const DEMO_PROFILES: Record<UserRole, UserProfile> = {
     name: "Dr. Alok Verma",
     role: "ADMIN",
     roleLabel: "Sustainability & Asset Director",
-    department: "Administration & Facilities",
+    department: "SOA University Administration",
     departmentCode: "ADMIN",
-    email: "director.verma@campus.edu",
+    email: "director.assets@soa.ac.in",
     avatarInitials: "AV",
     description: "Full institutional oversight, impact policies, and audit trails.",
   },
@@ -32,9 +32,9 @@ export const DEMO_PROFILES: Record<UserRole, UserProfile> = {
     name: "Prof. Priya Sharma",
     role: "DEPARTMENT_MANAGER",
     roleLabel: "Department Head",
-    department: "Computer Science & Engineering",
+    department: "Computer Science & Engineering (ITER Block 1)",
     departmentCode: "CSE",
-    email: "head.cse@campus.edu",
+    email: "head.cse@iter.soa.ac.in",
     avatarInitials: "PS",
     description: "Manages department assets, surplus declarations, and shortage requests.",
   },
@@ -43,9 +43,9 @@ export const DEMO_PROFILES: Record<UserRole, UserProfile> = {
     name: "Rohan Nair",
     role: "IT_OFFICER",
     roleLabel: "Lead Systems & Security Officer",
-    department: "Central IT & Infrastructure",
+    department: "ITER Central IT & Data Center",
     departmentCode: "ADMIN",
-    email: "r.nair@it.campus.edu",
+    email: "r.nair@it.iter.soa.ac.in",
     avatarInitials: "RN",
     description: "Performs cryptographic data-wipe audits and digital sanitization approvals.",
   },
@@ -54,9 +54,9 @@ export const DEMO_PROFILES: Record<UserRole, UserProfile> = {
     name: "Aanya Mehta",
     role: "REQUESTER",
     roleLabel: "Research Fellow / Faculty",
-    department: "Design & Innovation Lab",
+    department: "ITER Innovation & Design Studio",
     departmentCode: "DESIGN",
-    email: "aanya.m@design.campus.edu",
+    email: "aanya.m@iter.soa.ac.in",
     avatarInitials: "AM",
     description: "Searches available surplus items and submits asset acquisition requests.",
   },
@@ -74,7 +74,7 @@ const RoleContext = createContext<RoleContextType | undefined>(undefined);
 
 export function RoleProvider({ children }: { children: ReactNode }) {
   const [currentRole, setCurrentRole] = useState<UserRole>("ADMIN");
-  const [campusName, setCampusName] = useState("Main Innovation & Technology Campus");
+  const [campusName, setCampusName] = useState("ITER — Siksha 'O' Anusandhan University, Bhubaneswar");
 
   const setRole = (role: UserRole) => {
     setCurrentRole(role);

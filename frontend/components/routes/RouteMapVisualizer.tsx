@@ -83,13 +83,13 @@ export function RouteMapVisualizer({
     <div className="w-full h-full min-h-[500px] rounded-3xl overflow-hidden border border-border relative bg-surfaceSubtle shadow-card">
       {isMounted && L ? (
         <MapContainer
-          center={[12.9716, 77.5946]}
-          zoom={15}
+          center={[20.2520, 85.7980]}
+          zoom={16}
           scrollWheelZoom={true}
           className="w-full h-full"
         >
           <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | ITER SOA Bhubaneswar'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
 
@@ -117,7 +117,7 @@ export function RouteMapVisualizer({
                 <div className="p-1 space-y-1.5 min-w-[190px] text-xs">
                   <div className="flex items-center justify-between border-b border-border pb-1">
                     <span className="font-bold text-ink">
-                      {stop.type === "DEPOT" ? "Central Depot" : `Stop #${idx}: ${stop.type}`}
+                      {stop.type === "DEPOT" ? "SOA Central Depot" : `Stop #${idx}: ${stop.type}`}
                     </span>
                     <span className="text-[10px] font-mono font-bold bg-canvas px-1.5 py-0.2 rounded border border-border text-forest">
                       {stop.departmentCode}
@@ -143,7 +143,7 @@ export function RouteMapVisualizer({
       ) : (
         <div className="w-full h-full flex flex-col items-center justify-center text-xs text-ink-muted gap-2">
           <div className="w-7 h-7 border-2 border-forest border-t-transparent rounded-full animate-spin"></div>
-          <span>Rendering optimized polyline route matrix...</span>
+          <span>Rendering optimized polyline route matrix for ITER Bhubaneswar...</span>
         </div>
       )}
     </div>

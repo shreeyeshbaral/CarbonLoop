@@ -3,7 +3,7 @@ import { PrismaClient, AssetCategory, AssetCondition, CircularAction, AssetStatu
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("🌱 [CarbonLoop Seeder]: Initializing synthetic institutional database...");
+  console.log("🌱 [CarbonLoop Seeder]: Initializing synthetic database for ITER, Siksha 'O' Anusandhan University, Bhubaneswar...");
 
   // 1. CLEAR EXISTING RECORDS SAFELY
   await prisma.auditLog.deleteMany();
@@ -17,94 +17,94 @@ async function main() {
 
   console.log("🧹 Cleared existing database tables.");
 
-  // 2. SEED DEPARTMENTS
+  // 2. SEED DEPARTMENTS (ITER, Siksha 'O' Anusandhan University, Bhubaneswar - Jagamara/Khandagiri)
   const departmentsData = [
     {
       code: "CSE",
-      name: "Computer Science & Engineering",
-      building: "Alan Turing IT Complex",
+      name: "Computer Science & Engineering (ITER Block 1)",
+      building: "ITER Academic Block 1 (CSE/IT Complex)",
       floor: "3rd Floor",
-      room: "Lab 304",
-      lat: 12.9722,
-      lng: 77.5935,
-      contactEmail: "cse.surplus@campus.edu",
+      room: "AI & Data Lab 304",
+      lat: 20.2525,
+      lng: 85.7972,
+      contactEmail: "cse.surplus@iter.soa.ac.in",
       managerName: "Prof. Priya Sharma",
     },
     {
       code: "MECH",
-      name: "Mechanical Engineering",
-      building: "Sir M. Visvesvaraya Block",
+      name: "Mechanical Engineering (ITER Block 3)",
+      building: "ITER Mechanical & Thermal Labs Complex",
       floor: "Ground Floor",
-      room: "Workshop 1",
-      lat: 12.9708,
-      lng: 77.5960,
-      contactEmail: "mech.admin@campus.edu",
+      room: "CAD/CAM Workshop",
+      lat: 20.2512,
+      lng: 85.7990,
+      contactEmail: "mech.admin@iter.soa.ac.in",
       managerName: "Dr. Rajesh Kulkarni",
     },
     {
       code: "ECE",
-      name: "Electronics & Communication",
-      building: "J.C. Bose Tech Tower",
+      name: "Electronics & Communication (ITER Block 4)",
+      building: "ITER VLSI & Signal Processing Complex",
       floor: "2nd Floor",
-      room: "VLSI Center",
-      lat: 12.9735,
-      lng: 77.5955,
-      contactEmail: "ece.stores@campus.edu",
+      room: "Embedded Systems Bay",
+      lat: 20.2536,
+      lng: 85.7985,
+      contactEmail: "ece.stores@iter.soa.ac.in",
       managerName: "Dr. Arvind Swaminathan",
     },
     {
       code: "CIVIL",
-      name: "Civil & Environmental Engineering",
-      building: "Laurie Baker Eco Complex",
+      name: "Civil Engineering & Geotech (ITER Block 5)",
+      building: "ITER Structural & Eco-Materials Lab",
       floor: "1st Floor",
-      room: "Structures Lab",
-      lat: 12.9695,
-      lng: 77.5930,
-      contactEmail: "civil.procurement@campus.edu",
+      room: "Surveying Bay",
+      lat: 20.2505,
+      lng: 85.7968,
+      contactEmail: "civil.procurement@iter.soa.ac.in",
       managerName: "Prof. Nandini Rao",
     },
     {
       code: "DESIGN",
-      name: "Department of Design & Media",
-      building: "Innovation & Media Pavilion",
+      name: "Design & Innovation Media Lab (ITER Block 6)",
+      building: "ITER Innovation & Media Pavilion",
       floor: "4th Floor",
-      room: "UI/UX Studio",
-      lat: 12.9740,
-      lng: 77.5925,
-      contactEmail: "design.lab@campus.edu",
+      room: "UI/UX & AR Studio",
+      lat: 20.2542,
+      lng: 85.7965,
+      contactEmail: "design.lab@iter.soa.ac.in",
       managerName: "Prof. Kabir Sen",
     },
     {
       code: "LIBRARY",
       name: "Central Knowledge Resource Center",
-      building: "Central Library Building",
+      building: "ITER Biju Patnaik Central Library Building",
       floor: "2nd Floor",
       room: "Digital Repositories",
-      lat: 12.9715,
-      lng: 77.5948,
-      contactEmail: "library.systems@campus.edu",
+      lat: 20.2518,
+      lng: 85.7982,
+      contactEmail: "library.systems@iter.soa.ac.in",
       managerName: "Dr. Sunita Deshmukh",
     },
     {
       code: "ADMIN",
-      name: "Central Administration & Stores",
-      building: "Administrative Heritage Bhavan",
+      name: "SOA Central Administration & Stores",
+      building: "SOA Administrative Bhavan, Khandagiri Road",
       floor: "Ground Floor",
-      room: "Asset Central Bay",
-      lat: 12.9702,
-      lng: 77.5952,
-      contactEmail: "central.stores@campus.edu",
+      room: "Central Asset Inventory Bay",
+      lat: 20.2508,
+      lng: 85.7978,
+      contactEmail: "central.stores@soa.ac.in",
       managerName: "Dr. Alok Verma",
     },
     {
       code: "RESEARCH",
-      name: "Advanced Nanotech & AI Research Lab",
-      building: "C.V. Raman Discovery Center",
+      name: "Center for Advanced Nanotech & AI",
+      building: "ITER Advanced Research & Discovery Center",
       floor: "3rd Floor",
       room: "Clean Room 2",
-      lat: 12.9730,
-      lng: 77.5970,
-      contactEmail: "research.ops@campus.edu",
+      lat: 20.2530,
+      lng: 85.7995,
+      contactEmail: "research.ops@iter.soa.ac.in",
       managerName: "Dr. Vikram Sethi",
     },
   ];
@@ -114,7 +114,7 @@ async function main() {
     const dept = await prisma.department.create({ data: d });
     createdDepartments.push(dept);
   }
-  console.log(`✅ Seeded ${createdDepartments.length} departments.`);
+  console.log(`✅ Seeded ${createdDepartments.length} ITER SOA departments.`);
 
   // 3. SEED IMPACT FACTOR CONFIGURATIONS
   const impactFactors: {
@@ -141,7 +141,7 @@ async function main() {
   }
   console.log(`✅ Seeded ${impactFactors.length} impact factor benchmarks.`);
 
-  // 4. GENERATE 250+ REALISTIC ASSETS
+  // 4. GENERATE 250+ REALISTIC ASSETS FOR ITER CAMPUS
   const categories: AssetCategory[] = [
     "LAPTOP", "MONITOR", "DESKTOP", "CHAIR", "DESK", "PROJECTOR", "PRINTER", "NETWORKING", "LAB_EQUIPMENT"
   ];
@@ -167,7 +167,7 @@ async function main() {
     const dept = createdDepartments[i % createdDepartments.length];
     const category = categories[i % categories.length];
     const condition = conditions[(i + 1) % conditions.length];
-    const mfgList = manufacturers[category] || ["Campus Surplus"];
+    const mfgList = manufacturers[category] || ["ITER Surplus"];
     const mfg = mfgList[i % mfgList.length];
     const isDataWipeCategory = ["LAPTOP", "DESKTOP", "PRINTER", "NETWORKING"].includes(category);
 
@@ -198,9 +198,9 @@ async function main() {
         departmentId: dept.id,
         building: dept.building,
         floor: dept.floor,
-        room: `Bay ${(i % 12) + 1}`,
-        lat: dept.lat + (Math.random() - 0.5) * 0.002,
-        lng: dept.lng + (Math.random() - 0.5) * 0.002,
+        room: `Lab Bay ${(i % 12) + 1}`,
+        lat: dept.lat + (Math.random() - 0.5) * 0.001,
+        lng: dept.lng + (Math.random() - 0.5) * 0.001,
         ageYears: Number((1.0 + (i % 5) * 0.8).toFixed(1)),
         purchaseDate: new Date(Date.now() - (i % 5) * 31536000000),
         originalPrice,
@@ -211,26 +211,26 @@ async function main() {
         dataWipeCompleted: isDataWipeCategory && i % 2 === 0,
         recommendedAction,
         actionConfidence: 0.90 + (i % 10) * 0.01,
-        aiReasoning: `Asset assessed in ${condition.toLowerCase()} condition. Circular pathway ${recommendedAction} optimizes institutional capital retention.`,
+        aiReasoning: `Asset assessed in ${condition.toLowerCase()} condition. Circular pathway ${recommendedAction} optimizes institutional capital retention for ITER campus.`,
         serialNumber: `SN-${category.slice(0, 3)}-${tagCounter}-${i * 7}`,
         manufacturer: mfg,
         modelNumber: `MOD-${tagCounter}`,
-        tags: ["Campus Inventory", "Synthetic Seed"],
+        tags: ["ITER Campus Inventory", "SOA University"],
       },
     });
 
     assetList.push(asset);
   }
-  console.log(`✅ Seeded ${assetList.length} synthetic institutional assets.`);
+  console.log(`✅ Seeded ${assetList.length} synthetic institutional assets for ITER Bhubaneswar.`);
 
   // 5. SEED ACTIVE SHORTAGE REQUESTS
   const shortageData = [
-    { code: "DESIGN", category: "MONITOR" as AssetCategory, qty: 8, urgency: "HIGH" as UrgencyLevel, reason: "New UI/UX batch intake requires color-accurate secondary displays." },
-    { code: "DESIGN", category: "LAPTOP" as AssetCategory, qty: 5, urgency: "CRITICAL" as UrgencyLevel, reason: "Faculty workstations pending replacement." },
-    { code: "RESEARCH", category: "NETWORKING" as AssetCategory, qty: 4, urgency: "HIGH" as UrgencyLevel, reason: "Cleanroom switch expansion for sensor nodes." },
-    { code: "CIVIL", category: "PROJECTOR" as AssetCategory, qty: 2, urgency: "MEDIUM" as UrgencyLevel, reason: "Classroom 102 projector lamp failure." },
-    { code: "MECH", category: "CHAIR" as AssetCategory, qty: 12, urgency: "MEDIUM" as UrgencyLevel, reason: "CAD Lab ergonomics upgrade." },
-    { code: "ECE", category: "LAB_EQUIPMENT" as AssetCategory, qty: 2, urgency: "CRITICAL" as UrgencyLevel, reason: "Signals and RF testing benches short of spectrum analyzers." },
+    { code: "DESIGN", category: "MONITOR" as AssetCategory, qty: 8, urgency: "HIGH" as UrgencyLevel, reason: "ITER Design Studio (Block 6) requires color-accurate secondary displays for portfolio labs." },
+    { code: "DESIGN", category: "LAPTOP" as AssetCategory, qty: 5, urgency: "CRITICAL" as UrgencyLevel, reason: "Faculty workstations pending replacement in Block 6." },
+    { code: "RESEARCH", category: "NETWORKING" as AssetCategory, qty: 4, urgency: "HIGH" as UrgencyLevel, reason: "ITER Discovery Center cleanroom switch expansion for sensor nodes." },
+    { code: "CIVIL", category: "PROJECTOR" as AssetCategory, qty: 2, urgency: "MEDIUM" as UrgencyLevel, reason: "ITER Block 5 Classroom 102 projector lamp failure." },
+    { code: "MECH", category: "CHAIR" as AssetCategory, qty: 12, urgency: "MEDIUM" as UrgencyLevel, reason: "ITER Block 3 CAD Lab ergonomics upgrade." },
+    { code: "ECE", category: "LAB_EQUIPMENT" as AssetCategory, qty: 2, urgency: "CRITICAL" as UrgencyLevel, reason: "ITER Block 4 VLSI and RF testing benches short of spectrum analyzers." },
   ];
 
   for (const s of shortageData) {
@@ -253,7 +253,7 @@ async function main() {
   }
   console.log(`✅ Seeded ${shortageData.length} departmental shortage requests.`);
 
-  console.log("\n✨ [CarbonLoop Seeder]: Complete! 250 assets across 8 departments ready for live matching.");
+  console.log("\n✨ [CarbonLoop Seeder]: Complete! 250 assets across 8 ITER SOA departments ready for live matching.");
 }
 
 main()

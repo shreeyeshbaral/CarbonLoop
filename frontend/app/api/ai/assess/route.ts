@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { AssetCondition } from "@/types";
 
 export async function POST(req: NextRequest) {
   try {
@@ -39,7 +40,15 @@ export async function POST(req: NextRequest) {
     const hasBatteryIssue = descLower.includes("battery");
     const hasScreenIssue = descLower.includes("crack") || descLower.includes("dead pixel");
 
-    const condition = hasBatteryIssue || hasScreenIssue ? "FAIR" : descLower.includes("like new") || descLower.includes("mint") ? "EXCELLENT" : "GOOD";
+    let condition: AssetCondition = "GOOD";
+    if (descLower.includes("broken") || descLower.includes("defect") || descLower.includes("faulty")) {
+      condition = "POOR";
+    } else if (hasBatteryIssue || hasScreenIssue) {
+      condition = "FAIR";
+    } else if (descLower.includes("like new") || descLower.includes("mint") || descLower.includes("flawless")) {
+      condition = "EXCELLENT";
+    }
+
     const recommendedAction = condition === "POOR" ? "REPAIR" : category === "LAPTOP" || category === "MONITOR" ? "REDISTRIBUTE" : "REUSE";
 
     return NextResponse.json({

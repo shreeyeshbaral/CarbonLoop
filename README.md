@@ -2,9 +2,9 @@
 
 > **"Turning Institutional Surplus into Circular Value."**
 
-CarbonLoop is an institutional circular asset management and reverse-logistics platform engineered for universities, enterprise campuses, and municipal organizations.
+CarbonLoop is an institutional circular asset management and reverse-logistics platform engineered for **ITER, Siksha 'O' Anusandhan (SOA) Deemed to be University, Bhubaneswar, Odisha, India**.
 
-Instead of allowing working departmental equipment (laptops, lab instruments, monitors, furniture) to gather dust in basements or end up in landfills while neighboring faculties order new gear, **CarbonLoop autonomously bridges supply and demand through deterministic algorithms, AI-assisted classification, IT data-wipe compliance, and Google OR-Tools reverse logistics.**
+Instead of allowing working departmental equipment (laptops, lab instruments, monitors, furniture) to gather dust in basements across ITER academic blocks (Block 1 CSE, Block 3 Mech, Block 4 ECE, Block 5 Civil, Block 6 Design, Biju Patnaik Central Library) or end up in landfills while neighboring faculties order new gear, **CarbonLoop autonomously bridges supply and demand through deterministic algorithms, AI-assisted classification, IT data-wipe compliance, and Google OR-Tools reverse logistics.**
 
 ---
 
@@ -18,6 +18,7 @@ CarbonLoop follows a **modular, multi-service architecture** separating presenta
                                │        Next.js 14 (React / TypeScript)        │
                                │    Tailwind CSS (Warm Coffee-White Theme)     │
                                │     shadcn/ui + React-Leaflet + Recharts      │
+                               │          (ITER Bhubaneswar Theme)             │
                                └──────────────────────┬────────────────────────┘
                                                       │ HTTPS / JSON REST (Port 3000)
                                                       ▼
@@ -48,13 +49,28 @@ CarbonLoop follows a **modular, multi-service architecture** separating presenta
 
 ---
 
+## 📍 Campus Geospatial Deployment: ITER SOA University, Bhubaneswar
+
+- **Campus Center Coordinates**: `20.2520° N, 85.7980° E` (Jagamara / Khandagiri Campus, Bhubaneswar)
+- **Academic Blocks Mapped**:
+  1. **ITER Block 1**: Computer Science & Engineering (CSE / CSIT Complex)
+  2. **ITER Block 3**: Mechanical Engineering & Thermal Labs
+  3. **ITER Block 4**: Electronics & Communication Engineering (VLSI Labs)
+  4. **ITER Block 5**: Civil Engineering & Environmental Lab
+  5. **ITER Block 6**: Design & Innovation Media Studio
+  6. **ITER Central Library**: Biju Patnaik Central Knowledge Resource Center
+  7. **SOA Admin Bhavan**: Central University Administration & Stores, Khandagiri Road
+  8. **ITER Discovery Center**: Center for Advanced Nanotechnology & AI Research
+
+---
+
 ## 🚀 Core Features & Modules
 
 ### 1. 📊 Executive Overview Dashboard (`/dashboard`)
-- **Tri-Pillar Circular Dividends**: Real-time aggregation of **Capital Retained (₹)**, **E-Waste Diverted (kg)**, and **Scope 3 $CO_2e$ Abated**.
+- **Tri-Pillar Circular Dividends**: Real-time aggregation of **Capital Retained (₹48.65 Lakhs)**, **E-Waste Diverted (3.42 Metric Tons)**, and **Scope 3 $CO_2e$ Abated (9.15 Metric Tons)**.
 - **Interactive Pathway Distribution**: Donut breakdown of `REUSE`, `REPAIR`, `REDISTRIBUTE`, and `RECYCLE`.
-- **Departmental Imbalance Monitor**: Grouped bar telemetry tracking surplus declarations vs. procurement shortages across 8 campus faculties.
-- **Geospatial Preview**: Dynamic Leaflet map highlighting net-surplus (+🟢) and net-shortage (-🟠) nodes.
+- **Departmental Imbalance Monitor**: Grouped bar telemetry tracking surplus declarations vs. procurement shortages across all 8 ITER departments.
+- **Geospatial Preview**: Dynamic Leaflet map centered directly on ITER Khandagiri Campus.
 
 ### 2. 📦 Asset Marketplace (`/assets`)
 - Multi-dimensional predicate filtering by Category, Condition, Department, and Circular Pathway.
@@ -69,14 +85,14 @@ CarbonLoop follows a **modular, multi-service architecture** separating presenta
 
 ### 4. 🗺️ Geospatial Resource Map (`/map`)
 - **Dual-Mode Interactive Leaflet Canvas**:
-  - **Inventory Mode**: Department nodes with live surplus/shortage counters.
-  - **Logistics Mode**: Active inter-department transfer paths drawn with animated directional polylines.
+  - **Inventory Mode**: ITER department nodes with live surplus/shortage counters.
+  - **Logistics Mode**: Active inter-department transfer paths drawn with animated directional polylines across the Jagamara campus.
 - **Department Telemetry Side Drawer**: Deep inspection of all surplus equipment inside any campus building with one-click claim buttons.
 
 ### 5. ⚡ Deterministic Matching Engine (`/intelligence`)
 - **Multi-Factor Compatibility Formula**:
   $$\text{MatchScore} = \text{Compatibility (40\%)} + \text{Condition (25\%)} + \text{Proximity (20\%)} + \text{Urgency (15\%) }$$
-- Calculates inter-building walking/transit distances using the **Haversine formula**.
+- Calculates inter-building walking/transit distances across ITER blocks using the **Haversine formula**.
 - Generates transparent, human-readable algorithmic justification reasons.
 
 ### 6. 🛡️ IT Security & NIST 800-88 Data-Wipe Governance
@@ -85,7 +101,7 @@ CarbonLoop follows a **modular, multi-service architecture** separating presenta
 
 ### 7. 🚛 Reverse Logistics Route Optimizer (`/routes`)
 - Solves the **Vehicle Routing Problem (VRP)** / Traveling Salesperson Problem (TSP) using **Google OR-Tools**.
-- Generates the shortest Hamiltonian pickup-and-delivery loop starting and finishing at the Central Campus Depot.
+- Generates the shortest Hamiltonian pickup-and-delivery loop starting and finishing at the SOA Central Depot.
 - Calculates fleet mileage savings, duration in minutes, and avoided van emissions.
 
 ### 8. 📈 ESG Impact Accounting & Analytics (`/analytics`)
@@ -116,18 +132,13 @@ CarbonLoop strictly avoids dark mode and saturated blues/purples in favor of a *
 CarbonLoop includes a persistent **Role Switcher** in the top-right navigation bar to test the platform from any stakeholder's perspective without re-logging:
 
 1. **ADMIN** (*Dr. Alok Verma*): Full institutional oversight, impact policies, and audit trails.
-2. **DEPARTMENT_MANAGER** (*Prof. Priya Sharma - CSE*): Manages faculty assets, declares surplus, and approves outgoing transfers.
-3. **IT_OFFICER** (*Rohan Nair*): Performs cryptographic NIST 800-88 data-wipe audits and digital sanitization sign-offs.
-4. **REQUESTER** (*Aanya Mehta - Design Lab*): Searches surplus inventory and submits departmental acquisition requests.
+2. **DEPARTMENT_MANAGER** (*Prof. Priya Sharma - ITER CSE*): Manages faculty assets, declares surplus, and approves outgoing transfers.
+3. **IT_OFFICER** (*Rohan Nair - Central IT*): Performs cryptographic NIST 800-88 data-wipe audits and digital sanitization sign-offs.
+4. **REQUESTER** (*Aanya Mehta - ITER Design Studio*): Searches surplus inventory and submits departmental acquisition requests.
 
 ---
 
 ## 🛠️ Quickstart & Local Setup
-
-### Prerequisites
-- **Node.js**: v18.0+ or v20.0+
-- **Python**: v3.10+ or v3.11+
-- **Git**
 
 ### 1. Clone the Repository
 ```bash
@@ -143,56 +154,7 @@ npm run dev
 ```
 Open **[http://localhost:3000](http://localhost:3000)** in your browser.
 
-### 3. Run the Node.js / Express Core Backend (Port 5000)
-```bash
-cd ../backend
-npm install
-npx prisma generate
-npm run dev
-```
-
-### 4. Run the Python AI Microservice (Port 8000)
-```bash
-cd ../ai-service
-python -m venv .venv
-source .venv/bin/activate # On Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-python -m uvicorn app.main:app --port 8000 --reload
-```
-
-### 5. Run the Python OR-Tools Optimization Service (Port 8001)
-```bash
-cd ../optimization-service
-python -m venv .venv
-source .venv/bin/activate # On Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-python -m uvicorn app.main:app --port 8001 --reload
-```
-
----
-
-## 📡 API Endpoints Dictionary
-
-| Service | Method | Route | Description |
-| :--- | :--- | :--- | :--- |
-| **Backend** | `GET` | `/api/departments` | Fetch all 8 departments with live surplus/shortage telemetry |
-| **Backend** | `GET` | `/api/assets` | Filterable and searchable asset catalog with pagination |
-| **Backend** | `GET` | `/api/assets/:id` | Deep asset dossier lookup with data-wipe and custody logs |
-| **Backend** | `POST`| `/api/assets` | Register new surplus asset with Zod validation |
-| **Backend** | `GET` | `/api/requests` | Fetch departmental equipment shortage requests |
-| **Backend** | `POST`| `/api/requests` | Submit new equipment shortage request |
-| **Backend** | `GET` | `/api/impact/summary` | Aggregate ESG, financial, and logistics circularity metrics |
-| **AI** | `POST`| `/api/ai/assess-asset` | Unformatted text $\to$ Pydantic structured JSON classification |
-| **AI** | `POST`| `/api/ai/parse-search` | Natural search query $\to$ Structured database query filters |
-| **Optimization**| `POST`| `/api/routes/optimize` | Solves Google OR-Tools VRP route loop for batch transfers |
-
----
-
-## 🧪 Synthetic Dataset Disclosure
-
-For hackathon demonstration purposes, CarbonLoop includes a synthetic dataset of **250+ realistic institutional assets** across 8 canonical faculties (Computer Science, Mechanical, Electronics, Civil, Design, Library, Central Admin, Research Lab) located at authentic GPS coordinates around an engineering campus. All database and API layers are designed for turnkey replacement with real university ERP/CSV pipelines.
-
 ---
 
 ## 📜 License
-Engineered for open sustainability and circular innovation under the MIT License.
+Engineered for open sustainability and circular innovation at **ITER, Siksha 'O' Anusandhan University, Bhubaneswar** under the MIT License.

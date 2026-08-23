@@ -71,10 +71,10 @@ export function CampusMapWidget() {
         <div>
           <h3 className="font-heading text-base font-bold text-ink flex items-center gap-2">
             <MapPin className="w-4 h-4 text-forest" />
-            Campus Geospatial Inventory Preview
+            ITER SOA Campus Geospatial Preview
           </h3>
           <p className="text-xs text-ink-muted">
-            Live departmental nodes across 8 campus zones with real coordinates.
+            Live inventory nodes across ITER academic blocks (Jagamara, Bhubaneswar).
           </p>
         </div>
 
@@ -90,8 +90,8 @@ export function CampusMapWidget() {
       <div className="w-full h-80 rounded-xl overflow-hidden border border-border relative bg-surfaceSubtle">
         {isMounted && L ? (
           <MapContainer
-            center={[12.9716, 77.5946]}
-            zoom={15}
+            center={[20.2520, 85.7980]}
+            zoom={16}
             scrollWheelZoom={false}
             className="w-full h-full"
           >
@@ -135,7 +135,7 @@ export function CampusMapWidget() {
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center text-xs text-ink-muted gap-2">
             <div className="w-6 h-6 border-2 border-forest border-t-transparent rounded-full animate-spin"></div>
-            <span>Hydrating geospatial tiles...</span>
+            <span>Hydrating geospatial tiles for ITER Bhubaneswar...</span>
           </div>
         )}
       </div>
@@ -152,7 +152,7 @@ export function CampusMapWidget() {
             <span className="font-medium text-ink">Net Shortage Zone</span>
           </div>
         </div>
-        <span className="text-[11px]">Click pins for node telemetry</span>
+        <span className="text-[11px]">Khandagiri / Jagamara Campus</span>
       </div>
     </div>
   );
