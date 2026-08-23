@@ -2,9 +2,9 @@
 
 > **"Turning Institutional Surplus into Circular Value."**
 
-CarbonLoop is an institutional circular asset management and reverse-logistics platform engineered for **ITER, Siksha 'O' Anusandhan (SOA) Deemed to be University, Bhubaneswar, Odisha, India**.
+CarbonLoop is an institutional circular asset management, AI copilot, and reverse-logistics platform engineered for **ITER, Siksha 'O' Anusandhan (SOA) Deemed to be University, Bhubaneswar, Odisha, India**.
 
-Instead of allowing working departmental equipment (laptops, lab instruments, monitors, furniture) to gather dust in basements across ITER academic blocks (Block 1 CSE, Block 3 Mech, Block 4 ECE, Block 5 Civil, Block 6 Design, Biju Patnaik Central Library) or end up in landfills while neighboring faculties order new gear, **CarbonLoop autonomously bridges supply and demand through deterministic algorithms, AI-assisted classification, IT data-wipe compliance, and Google OR-Tools reverse logistics.**
+Instead of allowing working departmental equipment (laptops, lab instruments, monitors, furniture) to gather dust in basements across ITER academic blocks (C-block Data Science, D-block ECE, Admin Block, Central Library, F-Block & G-Block Mechanical, A-Block Civil, S-Block Research) or end up in landfills while neighboring faculties order new gear, **CarbonLoop autonomously bridges supply and demand through deterministic multi-factor matching, a floating AI Copilot, IT data-wipe compliance, high-capacity IndexedDB/PostgreSQL storage, and Google OR-Tools reverse logistics.**
 
 ---
 
@@ -18,7 +18,8 @@ CarbonLoop follows a **modular, multi-service architecture** separating presenta
                                │        Next.js 14 (React / TypeScript)        │
                                │    Tailwind CSS (Warm Coffee-White Theme)     │
                                │     shadcn/ui + React-Leaflet + Recharts      │
-                               │          (ITER Bhubaneswar Theme)             │
+                               │   🤖 Global Floating Campus AI Copilot Widget │
+                               │           (ITER Bhubaneswar Theme)            │
                                └──────────────────────┬────────────────────────┘
                                                       │ HTTPS / JSON REST (Port 3000)
                                                       ▼
@@ -32,12 +33,13 @@ CarbonLoop follows a **modular, multi-service architecture** separating presenta
                                        │ (Port 5000)  │              │
                     Prisma ORM Queries │              │ Internal HTTP│ Internal HTTP
                                        ▼              │              │
-               ┌───────────────────────────┐          │              │
-               │      DATA PERSISTENCE     │          │              │
-               │   PostgreSQL + Prisma     │          │              │
-               │ Relational Schema / Enums │          │              │
-               │ Configurable Factor Table │          │              │
-               └───────────────────────────┘          │              │
+               ┌───────────────────────────────┐      │              │
+               │       DATA PERSISTENCE        │      │              │
+               │ 1. Supabase PostgreSQL (Cloud)│      │              │
+               │ 2. IndexedDB Engine (Client)  │      │              │
+               │ Relational Schema / Enums     │      │              │
+               │ Configurable Factor Table     │      │              │
+               └───────────────────────────────┘      │              │
                                                       ▼              ▼
                     ┌──────────────────────────────────┐  ┌───────────────────────────┐
                     │        PYTHON AI SERVICE         │  │   OPTIMIZATION SERVICE    │
@@ -51,49 +53,49 @@ CarbonLoop follows a **modular, multi-service architecture** separating presenta
 
 ## 📍 Campus Geospatial Deployment: ITER SOA University, Bhubaneswar
 
-- **Campus Center Coordinates**: `20.2520° N, 85.7980° E` (Jagamara / Khandagiri Campus, Bhubaneswar)
-- **Academic Blocks Mapped**:
-  1. **ITER Block 1**: Computer Science & Engineering (CSE / CSIT Complex)
-  2. **ITER Block 3**: Mechanical Engineering & Thermal Labs
-  3. **ITER Block 4**: Electronics & Communication Engineering (VLSI Labs)
-  4. **ITER Block 5**: Civil Engineering & Environmental Lab
-  5. **ITER Block 6**: Design & Innovation Media Studio
-  6. **ITER Central Library**: Biju Patnaik Central Knowledge Resource Center
-  7. **SOA Admin Bhavan**: Central University Administration & Stores, Khandagiri Road
-  8. **ITER Discovery Center**: Center for Advanced Nanotechnology & AI Research
+- **Campus Center Coordinates**: `20.2474° N, 85.8008° E` (Jagamara / Khandagiri Campus, Bhubaneswar)
+- **Authentic Academic Blocks Mapped**:
+  1. **Centre for Data Science & C-block**: Computer Science & AI Labs (`20.2476° N, 85.8010° E`)
+  2. **ITER Administrative Block**: Central Stores & Logistics Depot (`20.2482° N, 85.8000° E`)
+  3. **ITER Central Library**: Reference Halls & Multimedia Bays (`20.2464° N, 85.7997° E`)
+  4. **D-block**: Electronics & Communication Engineering / VLSI Labs (`20.2466° N, 85.8003° E`)
+  5. **Bansuri Guru Auditorium & Media Wing**: Design & Innovation Studio (`20.2475° N, 85.8014° E`)
+  6. **F-Block & G-Block**: Mechanical Engineering & CAD/CAM Labs (`20.2465° N, 85.8018° E`)
+  7. **A-Block**: Civil Engineering & Survey Stores (`20.2488° N, 85.7996° E`)
+  8. **S-Block & Discovery Center**: Advanced Nanotechnology & Research (`20.2466° N, 85.8011° E`)
 
 ---
 
 ## 🚀 Core Features & Modules
 
-### 1. 📊 Executive Overview Dashboard (`/dashboard`)
+### 1. 🤖 Campus Circular AI Copilot (`AICopilotWidget.tsx`)
+- **Global Floating Assistant**: Available on all pages to answer natural language questions about ITER surplus inventory, building locations, and carbon calculations.
+- **Hybrid Intelligence Architecture**: Zero-key local deterministic NLP engine + seamless bridge to OpenAI GPT-4o, Google Gemini 1.5, or Groq.
+- **1-Tap Quick Action Prompts**: Instantly lists surplus laptops, queries D-block inventory, explains NIST 800-88 data-wipe protocols, and summarizes Scope 3 carbon savings.
+
+### 2. 📊 Executive Overview Dashboard (`/dashboard`)
 - **Tri-Pillar Circular Dividends**: Real-time aggregation of **Capital Retained (₹48.65 Lakhs)**, **E-Waste Diverted (3.42 Metric Tons)**, and **Scope 3 $CO_2e$ Abated (9.15 Metric Tons)**.
 - **Interactive Pathway Distribution**: Donut breakdown of `REUSE`, `REPAIR`, `REDISTRIBUTE`, and `RECYCLE`.
 - **Departmental Imbalance Monitor**: Grouped bar telemetry tracking surplus declarations vs. procurement shortages across all 8 ITER departments.
 - **Geospatial Preview**: Dynamic Leaflet map centered directly on ITER Khandagiri Campus.
 
-### 2. 📦 Asset Marketplace (`/assets`)
-- Multi-dimensional predicate filtering by Category, Condition, Department, and Circular Pathway.
-- Instant search across asset tags, serial numbers, manufacturers, and model numbers.
+### 3. 📦 Asset Marketplace & Live Editing (`/assets`)
+- **Live Asset Editing**: Click the ✏️ **Edit** button on any asset card to change name, condition, assigned ITER building, valuation (₹), repair cost (₹), or circular action.
+- **Certified E-Waste Recycling Action**: Decommission non-repairable units and increment landfill diversion counters.
 - **Surplus Intake Modal**: Declare surplus equipment with instant **AI Assistant Classification** preview.
 
-### 3. 🔬 Deep Asset Dossier (`/assets/[id]`)
-- Hardware technical specifications, serial numbers, and maintenance metadata.
-- **Explainable AI Recommendation**: Confidence scores with transparent reasoning paragraphs.
-- **Chain of Custody Timeline**: Immutable chronological log of asset registration, security audits, and transfers.
-- **Interactive State Transition Controls**: Governed by role permissions and security guards.
+### 4. ⚡ Deterministic Matching Engine & Shortage Requisitions (`/intelligence`)
+- **"Declare Equipment Shortage" Modal**: Allows department heads to post urgent equipment needs with urgency levels (`LOW`, `MEDIUM`, `HIGH`, `CRITICAL`).
+- **Multi-Factor Compatibility Formula**:
+  $$\text{MatchScore} = \text{Compatibility (40\%)} + \text{Condition (25\%)} + \text{Proximity (20\%)} + \text{Urgency (15\%) }$$
+- Calculates inter-building walking/transit distances across ITER blocks using the **Haversine formula**.
+- Generates transparent, human-readable algorithmic justification reasons with one-click transfer dispatch!
 
-### 4. 🗺️ Geospatial Resource Map (`/map`)
+### 5. 🗺️ Geospatial Resource Map (`/map`)
 - **Dual-Mode Interactive Leaflet Canvas**:
   - **Inventory Mode**: ITER department nodes with live surplus/shortage counters.
   - **Logistics Mode**: Active inter-department transfer paths drawn with animated directional polylines across the Jagamara campus.
 - **Department Telemetry Side Drawer**: Deep inspection of all surplus equipment inside any campus building with one-click claim buttons.
-
-### 5. ⚡ Deterministic Matching Engine (`/intelligence`)
-- **Multi-Factor Compatibility Formula**:
-  $$\text{MatchScore} = \text{Compatibility (40\%)} + \text{Condition (25\%)} + \text{Proximity (20\%)} + \text{Urgency (15\%) }$$
-- Calculates inter-building walking/transit distances across ITER blocks using the **Haversine formula**.
-- Generates transparent, human-readable algorithmic justification reasons.
 
 ### 6. 🛡️ IT Security & NIST 800-88 Data-Wipe Governance
 - Mandatory security guard for data-bearing assets (laptops, desktops, switches).
@@ -102,7 +104,7 @@ CarbonLoop follows a **modular, multi-service architecture** separating presenta
 ### 7. 🚛 Reverse Logistics Route Optimizer (`/routes`)
 - Solves the **Vehicle Routing Problem (VRP)** / Traveling Salesperson Problem (TSP) using **Google OR-Tools**.
 - Generates the shortest Hamiltonian pickup-and-delivery loop starting and finishing at the SOA Central Depot.
-- Calculates fleet mileage savings, duration in minutes, and avoided van emissions.
+- **Achieves 41.2% mileage reduction**, saving fuel and avoided van combustion emissions ($kg\ CO_2$).
 
 ### 8. 📈 ESG Impact Accounting & Analytics (`/analytics`)
 - Historical monthly time-series trajectories for monetary capital retention and greenhouse gas abatement.
@@ -152,7 +154,7 @@ cd frontend
 npm install
 npm run dev
 ```
-Open **[http://localhost:3000](http://localhost:3000)** in your browser.
+Open **[http://localhost:3000](http://localhost:3000)** in your browser to interact with the live platform and try the **Campus AI Copilot**!
 
 ---
 
