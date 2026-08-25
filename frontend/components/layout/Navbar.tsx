@@ -78,7 +78,7 @@ export function Navbar() {
               <div className="flex flex-col">
                 <div className="flex items-center gap-1.5">
                   <span className="font-heading font-bold text-lg sm:text-xl tracking-tight text-ink">
-                    carbon<span className="text-forest font-bold">loop</span>
+                    CARBON<span className="text-forest font-bold">LOOP</span>
                   </span>
                   <span className="text-[9px] sm:text-[10px] font-semibold px-1.5 py-0.2 bg-surfaceSubtle border border-border text-ink-muted rounded">
                     v1.0
