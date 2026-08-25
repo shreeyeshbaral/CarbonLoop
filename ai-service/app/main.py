@@ -3,13 +3,22 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
-from app.schemas import (
-    AssetAssessmentRequest,
-    AssetAssessmentResponse,
-    NaturalSearchRequest,
-    NaturalSearchResponse,
-)
-from app.services.classifier import classifier
+try:
+    from app.schemas import (
+        AssetAssessmentRequest,
+        AssetAssessmentResponse,
+        NaturalSearchRequest,
+        NaturalSearchResponse,
+    )
+    from app.services.classifier import classifier
+except (ImportError, ModuleNotFoundError):
+    from schemas import (
+        AssetAssessmentRequest,
+        AssetAssessmentResponse,
+        NaturalSearchRequest,
+        NaturalSearchResponse,
+    )
+    from services.classifier import classifier
 
 load_dotenv()
 
