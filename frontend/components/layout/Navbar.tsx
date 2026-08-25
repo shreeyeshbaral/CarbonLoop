@@ -66,13 +66,19 @@ export function Navbar() {
           {/* Brand Logo */}
           <div className="flex items-center gap-4 sm:gap-8">
             <Link href="/dashboard" className="flex items-center gap-2.5 sm:gap-3 group">
-              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-forest flex items-center justify-center text-surface shadow-md transition-transform group-hover:scale-105 shrink-0">
-                <RefreshCw className="w-4 h-4 sm:w-5 sm:h-5 text-surfaceSubtle animate-spin-slow" />
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-forest flex items-center justify-center p-1.5 shadow-md transition-transform group-hover:scale-105 shrink-0 overflow-hidden">
+                <svg viewBox="0 0 64 64" className="w-full h-full" fill="none">
+                  <path d="M 20 26 A 14 14 0 0 1 44 26" stroke="#FFFDF8" strokeWidth="4.5" strokeLinecap="round" />
+                  <polyline points="38 20 44 26 38 32" stroke="#FFFDF8" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M 44 38 A 14 14 0 0 1 20 38" stroke="#FFFDF8" strokeWidth="4.5" strokeLinecap="round" />
+                  <polyline points="26 44 20 38 26 32" stroke="#FFFDF8" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M 28 34 C 28 27, 36 26, 37 26 C 37 34, 30 35, 28 34 Z" fill="#FFFDF8" />
+                </svg>
               </div>
               <div className="flex flex-col">
                 <div className="flex items-center gap-1.5">
                   <span className="font-heading font-bold text-lg sm:text-xl tracking-tight text-ink">
-                    CARBON<span className="text-forest">LOOP</span>
+                    carbon<span className="text-forest font-bold">loop</span>
                   </span>
                   <span className="text-[9px] sm:text-[10px] font-semibold px-1.5 py-0.2 bg-surfaceSubtle border border-border text-ink-muted rounded">
                     v1.0

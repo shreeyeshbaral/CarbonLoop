@@ -23,9 +23,14 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "CarbonLoop | Turning Institutional Surplus into Circular Value",
+  title: "CarbonLoop",
   description:
     "Institutional circular asset management, reverse logistics, and internal surplus redistribution platform for ITER SOA University, Bhubaneswar.",
+  icons: {
+    icon: "/icon.svg",
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
+  },
 };
 
 export default function RootLayout({
@@ -35,6 +40,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${poppins.variable} ${montserrat.variable} bg-canvas text-ink`}>
+      <head>
+        <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+      </head>
       <body className="min-h-screen antialiased bg-canvas text-ink selection:bg-forest/20 selection:text-forest flex flex-col font-sans">
         <RoleProvider>
           <AssetProvider>
