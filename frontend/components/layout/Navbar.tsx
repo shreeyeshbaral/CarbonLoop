@@ -13,13 +13,16 @@ import {
   UserCheck,
   Building2,
   ChevronDown,
-  RefreshCw,
   ShieldCheck,
   CheckCircle2,
   Menu,
-  X
+  X,
+  LogIn,
+  LogOut,
+  UserPlus,
 } from "lucide-react";
 import { useRole, DEMO_PROFILES } from "@/context/RoleContext";
+import { useAuth } from "@/context/AuthContext";
 import { UserRole } from "@/types";
 
 const NAV_LINKS = [
@@ -33,7 +36,9 @@ const NAV_LINKS = [
 
 export function Navbar() {
   const pathname = usePathname();
-  const { currentRole, user, setRole, campusName } = useRole();
+  const { currentRole, campusName } = useRole();
+  const { user, isAuthenticated, openAuthModal, logout, switchDemoRole } = useAuth();
+
   const [roleDropdownOpen, setRoleDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -113,108 +118,150 @@ export function Navbar() {
             </nav>
           </div>
 
-          {/* Right Area: Role Switcher & Mobile Menu Toggle */}
+          {/* Right Area: Auth Profile & Role Switcher */}
           <div className="flex items-center gap-2">
-            {/* Role Switcher Dropdown */}
-            <div className="relative">
-              <button
-                onClick={() => setRoleDropdownOpen(!roleDropdownOpen)}
-                className="flex items-center gap-2 sm:gap-2.5 px-2 sm:px-3 py-1.5 rounded-xl border border-border bg-surface hover:bg-canvas transition-colors shadow-xs"
-                aria-expanded={roleDropdownOpen}
-                aria-label="Switch User Perspective Role"
-              >
-                <div className="w-7 h-7 rounded-lg bg-forest text-surface font-heading text-xs font-bold flex items-center justify-center shrink-0">
-                  {user.avatarInitials}
-                </div>
-                <div className="text-left hidden sm:block">
-                  <div className="text-xs font-semibold text-ink flex items-center gap-1">
-                    {user.name}
-                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-surfaceSubtle text-forest font-medium border border-border">
-                      {user.role}
-                    </span>
-                  </div>
-                  <div className="text-[10px] text-ink-muted truncate max-w-[130px] md:max-w-[160px]">
-                    {user.roleLabel}
-                  </div>
-                </div>
-                <ChevronDown className="w-3.5 h-3.5 text-ink-muted" />
-              </button>
-
-              {/* Role Dropdown Menu */}
-              {roleDropdownOpen && (
-                <div
-                  className="absolute right-0 mt-2 w-72 sm:w-80 rounded-2xl bg-surface border border-border shadow-elevated p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150"
-                  onMouseLeave={() => setRoleDropdownOpen(false)}
+            {isAuthenticated && user ? (
+              <div className="relative">
+                <button
+                  onClick={() => setRoleDropdownOpen(!roleDropdownOpen)}
+                  className="flex items-center gap-2 sm:gap-2.5 px-2 sm:px-3 py-1.5 rounded-xl border border-border bg-surface hover:bg-canvas transition-colors shadow-xs"
+                  aria-expanded={roleDropdownOpen}
+                  aria-label="User Account Menu"
                 >
-                  <div className="px-3 py-2 border-b border-border mb-1">
-                    <div className="text-xs font-bold text-ink uppercase tracking-wider flex items-center gap-1.5">
-                      <UserCheck className="w-3.5 h-3.5 text-forest" />
-                      Switch Perspective (Demo)
-                    </div>
-                    <p className="text-[11px] text-ink-muted mt-0.5">
-                      Test the workflow from any institutional role without re-logging.
-                    </p>
+                  <div className="w-7 h-7 rounded-lg bg-forest text-surface font-heading text-xs font-bold flex items-center justify-center shrink-0">
+                    {user.avatarInitials}
                   </div>
+                  <div className="text-left hidden sm:block">
+                    <div className="text-xs font-semibold text-ink flex items-center gap-1">
+                      {user.name}
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-surfaceSubtle text-forest font-medium border border-border">
+                        {user.role}
+                      </span>
+                    </div>
+                    <div className="text-[10px] text-ink-muted truncate max-w-[130px] md:max-w-[160px]">
+                      {user.roleLabel}
+                    </div>
+                  </div>
+                  <ChevronDown className="w-3.5 h-3.5 text-ink-muted" />
+                </button>
 
-                  <div className="space-y-1 max-h-[65vh] overflow-y-auto">
-                    {(Object.keys(DEMO_PROFILES) as UserRole[]).map((roleKey) => {
-                      const profile = DEMO_PROFILES[roleKey];
-                      const isSelected = currentRole === roleKey;
-                      return (
-                        <button
-                          key={roleKey}
-                          onClick={() => {
-                            setRole(roleKey);
-                            setRoleDropdownOpen(false);
-                          }}
-                          className={`w-full text-left p-2.5 rounded-xl transition-colors flex items-start gap-2.5 ${
-                            isSelected
-                              ? "bg-forest-light border border-forest/20"
-                              : "hover:bg-canvas"
-                          }`}
-                        >
-                          <div
-                            className={`w-7 h-7 rounded-lg text-xs font-bold flex items-center justify-center shrink-0 ${
+                {/* Profile & Role Dropdown Menu */}
+                {roleDropdownOpen && (
+                  <div
+                    className="absolute right-0 mt-2 w-72 sm:w-80 rounded-2xl bg-surface border border-border shadow-elevated p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150"
+                    onMouseLeave={() => setRoleDropdownOpen(false)}
+                  >
+                    {/* User Identity Box */}
+                    <div className="p-3 bg-canvas rounded-xl mb-2 border border-border/70">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-bold text-xs text-ink">{user.name}</span>
+                        <span className="text-[9px] uppercase font-bold px-1.5 py-0.2 rounded bg-forest-light text-forest border border-forest/20">
+                          {user.provider} Auth
+                        </span>
+                      </div>
+                      <div className="text-[11px] text-ink-muted">{user.email}</div>
+                      <div className="text-[10px] text-forest font-semibold mt-0.5">
+                        {user.department} ({user.departmentCode})
+                      </div>
+                    </div>
+
+                    <div className="px-3 py-1.5 border-b border-border mb-1">
+                      <div className="text-xs font-bold text-ink uppercase tracking-wider flex items-center gap-1.5">
+                        <UserCheck className="w-3.5 h-3.5 text-forest" />
+                        Switch Perspective (Demo)
+                      </div>
+                    </div>
+
+                    <div className="space-y-1 max-h-[45vh] overflow-y-auto">
+                      {(Object.keys(DEMO_PROFILES) as UserRole[]).map((roleKey) => {
+                        const profile = DEMO_PROFILES[roleKey];
+                        const isSelected = currentRole === roleKey;
+                        return (
+                          <button
+                            key={roleKey}
+                            onClick={() => {
+                              switchDemoRole(roleKey);
+                              setRoleDropdownOpen(false);
+                            }}
+                            className={`w-full text-left p-2 rounded-xl transition-colors flex items-start gap-2.5 ${
                               isSelected
-                                ? "bg-forest text-surface"
-                                : "bg-surfaceSubtle text-ink-muted border border-border"
+                                ? "bg-forest-light border border-forest/20"
+                                : "hover:bg-canvas"
                             }`}
                           >
-                            {profile.avatarInitials}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between">
-                              <span className={`text-xs font-bold ${isSelected ? "text-forest" : "text-ink"}`}>
-                                {profile.name}
-                              </span>
-                              <span className="text-[9px] uppercase font-semibold px-1.5 py-0.2 bg-canvas text-ink-muted rounded border border-border">
-                                {roleKey}
-                              </span>
+                            <div
+                              className={`w-6 h-6 rounded-lg text-[10px] font-bold flex items-center justify-center shrink-0 ${
+                                isSelected
+                                  ? "bg-forest text-surface"
+                                  : "bg-surfaceSubtle text-ink-muted border border-border"
+                              }`}
+                            >
+                              {profile.avatarInitials}
                             </div>
-                            <div className="text-[10px] font-medium text-ink-muted truncate">
-                              {profile.roleLabel} · {profile.departmentCode}
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between">
+                                <span className={`text-xs font-bold ${isSelected ? "text-forest" : "text-ink"}`}>
+                                  {profile.name}
+                                </span>
+                                <span className="text-[9px] uppercase font-semibold px-1.5 py-0.2 bg-canvas text-ink-muted rounded border border-border">
+                                  {roleKey}
+                                </span>
+                              </div>
+                              <div className="text-[10px] font-medium text-ink-muted truncate">
+                                {profile.roleLabel}
+                              </div>
                             </div>
-                            <p className="text-[10px] text-ink-muted mt-0.5 leading-tight hidden xs:block">
-                              {profile.description}
-                            </p>
-                          </div>
-                          {isSelected && (
-                            <CheckCircle2 className="w-4 h-4 text-forest shrink-0 mt-0.5" />
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
+                            {isSelected && (
+                              <CheckCircle2 className="w-3.5 h-3.5 text-forest shrink-0 mt-0.5" />
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
 
-                  <div className="mt-2 pt-2 border-t border-border px-3 py-1.5 bg-canvas rounded-xl flex items-center gap-2">
-                    <ShieldCheck className="w-4 h-4 text-forest shrink-0" />
-                    <span className="text-[10px] text-ink-muted">
-                      Full JWT & RBAC infrastructure ready for Phase 14.
-                    </span>
+                    {/* Sign Out Button */}
+                    <div className="mt-2 pt-2 border-t border-border flex items-center justify-between gap-2 px-1">
+                      <button
+                        onClick={() => {
+                          setRoleDropdownOpen(false);
+                          openAuthModal("login");
+                        }}
+                        className="text-[11px] font-semibold text-forest hover:underline px-2 py-1"
+                      >
+                        Change Account
+                      </button>
+                      <button
+                        onClick={() => {
+                          logout();
+                          setRoleDropdownOpen(false);
+                        }}
+                        className="flex items-center gap-1 text-[11px] font-semibold text-amber hover:bg-amber-light/60 px-2.5 py-1.5 rounded-lg transition-colors"
+                      >
+                        <LogOut className="w-3.5 h-3.5" />
+                        Sign Out
+                      </button>
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => openAuthModal("login")}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-border bg-surface hover:bg-canvas text-xs font-bold text-ink transition-colors shadow-xs"
+                >
+                  <LogIn className="w-3.5 h-3.5 text-forest" />
+                  Sign In
+                </button>
+                <button
+                  onClick={() => openAuthModal("signup")}
+                  className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-forest hover:bg-forest-dark text-xs font-bold text-surface transition-colors shadow-xs"
+                >
+                  <UserPlus className="w-3.5 h-3.5" />
+                  Register
+                </button>
+              </div>
+            )}
 
             {/* Mobile Hamburger Menu Button */}
             <button
@@ -253,6 +300,29 @@ export function Navbar() {
               </Link>
             );
           })}
+
+          {!isAuthenticated && (
+            <div className="pt-2 border-t border-border flex gap-2">
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  openAuthModal("login");
+                }}
+                className="flex-1 py-2 rounded-xl bg-canvas border border-border text-center text-xs font-bold text-ink"
+              >
+                Sign In
+              </button>
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  openAuthModal("signup");
+                }}
+                className="flex-1 py-2 rounded-xl bg-forest text-surface text-center text-xs font-bold"
+              >
+                Register
+              </button>
+            </div>
+          )}
         </div>
       )}
 
