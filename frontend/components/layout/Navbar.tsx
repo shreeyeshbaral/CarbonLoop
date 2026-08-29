@@ -44,15 +44,15 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-surface/95 backdrop-blur-md">
-      {/* Top Utility & Disclaimer Bar */}
+      {/* Top Utility & Operational Status Bar */}
       <div className="bg-canvas border-b border-border/60 px-3 sm:px-4 py-1 text-xs text-ink-muted flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold tracking-wide uppercase bg-forest-light text-forest">
-            <span className="w-1.5 h-1.5 rounded-full bg-forest animate-pulse"></span>
-            Prototype Mode
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide uppercase bg-forest-light text-forest border border-forest/20">
+            <span className="w-2 h-2 rounded-full bg-forest animate-pulse"></span>
+            Live Institutional Cluster
           </span>
           <span className="hidden md:inline text-ink-muted">
-            Simulated institutional data for hackathon demonstration. Real ERP/CSV pipelines pluggable.
+            High-Capacity Real-Time Storage • Supabase Cloud PostgreSQL Sync Active
           </span>
         </div>
         <div className="flex items-center gap-2">

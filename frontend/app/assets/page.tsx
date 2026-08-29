@@ -11,9 +11,11 @@ import {
   Building2,
   Tag,
   CheckCircle2,
+  FileSpreadsheet,
 } from "lucide-react";
 import { AssetCard } from "@/components/assets/AssetCard";
 import { RegisterAssetModal } from "@/components/assets/RegisterAssetModal";
+import { BulkCsvImporter } from "@/components/assets/BulkCsvImporter";
 import { useAssets } from "@/context/AssetContext";
 import { MOCK_DEPARTMENTS } from "@/lib/mockData";
 import { Asset, AssetCategory, AssetCondition, CircularAction } from "@/types";
@@ -27,6 +29,7 @@ export default function AssetsMarketplacePage() {
   const [selectedCondition, setSelectedCondition] = useState<string>("ALL");
   const [selectedAction, setSelectedAction] = useState<string>("ALL");
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
+  const [isBulkCsvModalOpen, setIsBulkCsvModalOpen] = useState(false);
   const [claimToast, setClaimToast] = useState<string | null>(null);
 
   // Multi-criteria predicate filtering
@@ -107,13 +110,23 @@ export default function AssetsMarketplacePage() {
           </p>
         </div>
 
-        <button
-          onClick={() => setIsRegisterModalOpen(true)}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-forest text-surface font-semibold text-xs sm:text-sm hover:bg-forest-dark transition-all shadow-xs"
-        >
-          <PlusCircle className="w-4 h-4" />
-          Declare Surplus Asset / E-Waste
-        </button>
+        <div className="flex items-center gap-2.5 shrink-0">
+          <button
+            onClick={() => setIsBulkCsvModalOpen(true)}
+            className="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-surface border border-border text-ink hover:bg-canvas font-semibold text-xs sm:text-sm transition-all shadow-xs"
+          >
+            <FileSpreadsheet className="w-4 h-4 text-forest" />
+            Bulk CSV Import
+          </button>
+
+          <button
+            onClick={() => setIsRegisterModalOpen(true)}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-forest text-surface font-semibold text-xs sm:text-sm hover:bg-forest-dark transition-all shadow-xs"
+          >
+            <PlusCircle className="w-4 h-4" />
+            Declare Surplus Asset / E-Waste
+          </button>
+        </div>
       </div>
 
       {/* Filter and Search Bar */}
@@ -266,6 +279,12 @@ export default function AssetsMarketplacePage() {
         isOpen={isRegisterModalOpen}
         onClose={() => setIsRegisterModalOpen(false)}
         onSuccess={handleNewAssetCreated}
+      />
+
+      {/* Bulk CSV Importer Modal */}
+      <BulkCsvImporter
+        isOpen={isBulkCsvModalOpen}
+        onClose={() => setIsBulkCsvModalOpen(false)}
       />
     </div>
   );

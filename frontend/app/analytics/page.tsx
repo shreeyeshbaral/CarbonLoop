@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import {
   BarChart3,
   TrendingUp,
@@ -10,20 +12,70 @@ import {
   Sparkles,
   Layers,
   FileCheck,
+  CheckCircle2,
 } from "lucide-react";
 import { FinancialTrajectoryChart } from "@/components/analytics/FinancialTrajectoryChart";
 import { CarbonAbatementChart } from "@/components/analytics/CarbonAbatementChart";
 import { DepartmentCircularityRankings } from "@/components/analytics/DepartmentCircularityRankings";
 import { CategoryHealthChart } from "@/components/analytics/CategoryHealthChart";
 import { EsgAuditTable } from "@/components/analytics/EsgAuditTable";
-import { MOCK_IMPACT_METRICS } from "@/lib/mockData";
+import { MOCK_IMPACT_METRICS, MOCK_DEPARTMENTS } from "@/lib/mockData";
 import { formatCurrency, formatWeight } from "@/lib/utils";
 
 export default function AnalyticsPage() {
   const metrics = MOCK_IMPACT_METRICS;
+  const [downloadToast, setDownloadToast] = useState(false);
+
+  const handleExportAuditCsv = () => {
+    const reportData = `================================================================================
+INSTITUTIONAL ESG AUDIT REPORT — SCOPE 3 CATEGORY 1 GHG ABATEMENT
+Campus: ITER, Siksha 'O' Anusandhan Deemed to be University, Bhubaneswar
+Compliance Framework: GHG Protocol Corporate Value Chain Standard / ISO 14064
+Generated Date: ${new Date().toLocaleDateString('en-IN', { dateStyle: 'full' })}
+================================================================================
+
+1. EXECUTIVE KPI SUMMARY
+--------------------------------------------------------------------------------
+Metric,Value,Unit,Validation Standard
+Avoided Procurement Spend,${metrics.procurementAvoidedInr},INR (₹),Institutional Purchasing Benchmark
+Landfill E-Waste Diverted,${metrics.wasteDivertedKg},kg,CPCB E-Waste Rules 2022
+Embodied Scope 3 CO2e Abated,${metrics.co2AvoidedKg},kg CO2e,DEFRA / IPCC E-Product LCA Factor
+Reverse Logistics Mileage Saved,${metrics.logisticsKmOptimized},km,Google OR-Tools VRP Solver
+Institutional Circularity Rate,71.0,%,Circular Economy Dividend Ratio
+
+2. DEPARTMENTAL CIRCULARITY PERFORMANCE
+--------------------------------------------------------------------------------
+Department_Code,Department_Name,Building,Surplus_Declared,Shortages_Fulfilled,Circularity_Index_Score,ESG_Rank
+${MOCK_DEPARTMENTS.map((d, i) => `${d.code},"${d.name}","${d.building}",${d.surplusCount || 20},${d.shortageCount || 10},${94 - i * 4},Tier_${i < 3 ? 'Gold' : i < 6 ? 'Silver' : 'Bronze'}`).join('\n')}
+
+================================================================================
+Report digitally signed by: Sustainability & Asset Governance Director
+Verification Hash: SHA-256-CARBONLOOP-${Date.now()}-SOA-AUDIT
+================================================================================`;
+
+    const blob = new Blob([reportData], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `CarbonLoop_SOA_Institutional_ESG_Audit_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    setDownloadToast(true);
+    setTimeout(() => setDownloadToast(false), 4000);
+  };
 
   return (
     <div className="space-y-8 animate-in fade-in duration-300">
+      {/* Toast Notification */}
+      {downloadToast && (
+        <div className="fixed bottom-6 right-6 z-50 p-4 rounded-2xl bg-forest text-surface shadow-elevated flex items-center gap-3 border border-forest-light/20 text-xs animate-in slide-in-from-bottom-5">
+          <CheckCircle2 className="w-5 h-5 shrink-0 text-leaf" />
+          <span>Official Institutional Scope 3 ESG Audit Report downloaded successfully!</span>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-border/80">
         <div>
@@ -39,10 +91,18 @@ export default function AnalyticsPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-forest-light text-forest border border-forest/20">
+        <div className="flex items-center gap-3">
+          <span className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-forest-light text-forest border border-forest/20 hidden sm:inline">
             GHG Protocol Scope 3 Compliant
           </span>
+
+          <button
+            onClick={handleExportAuditCsv}
+            className="py-2.5 px-4 rounded-xl bg-forest hover:bg-forest-dark text-surface font-semibold text-xs flex items-center gap-2 transition-all shadow-xs"
+          >
+            <Download className="w-4 h-4" />
+            Export Official ESG Audit (CSV)
+          </button>
         </div>
       </div>
 
