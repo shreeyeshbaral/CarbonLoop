@@ -90,7 +90,7 @@ export function CampusMapWidget() {
       <div className="w-full h-80 rounded-xl overflow-hidden border border-border relative bg-surfaceSubtle">
         {isMounted && L ? (
           <MapContainer
-            center={[20.2474, 85.8008]}
+            center={[20.2472, 85.8008]}
             zoom={18}
             scrollWheelZoom={false}
             className="w-full h-full"

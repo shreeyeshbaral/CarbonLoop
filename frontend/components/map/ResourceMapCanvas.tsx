@@ -67,9 +67,10 @@ export function ResourceMapCanvas({
   // Active Transfer Routes across exact ITER buildings:
   // - C-block (Data Science)
   // - D-block (ECE)
-  // - Bansuri Guru Wing (Design)
+  // - Bansuri Guru Auditorium (Design)
   // - Central Library
   // - ITER Admin Block
+  // - S-Block (Sports Complex)
   const transferRoutes: TransferRoute[] = [
     {
       id: "rt-01",
@@ -80,8 +81,8 @@ export function ResourceMapCanvas({
       status: "In Transit",
       driverEta: "2 mins",
       coordinates: [
-        [20.2476, 85.8010],
-        [20.2475, 85.8014],
+        [20.2473, 85.8008],
+        [20.2478, 85.8015],
       ],
     },
     {
@@ -93,9 +94,9 @@ export function ResourceMapCanvas({
       status: "Scheduled",
       driverEta: "3 mins",
       coordinates: [
-        [20.2466, 85.8003],
-        [20.2471, 85.8008],
-        [20.2475, 85.8014],
+        [20.2474, 85.8001],
+        [20.2475, 85.8008],
+        [20.2478, 85.8015],
       ],
     },
     {
@@ -107,8 +108,8 @@ export function ResourceMapCanvas({
       status: "Loading",
       driverEta: "2 mins",
       coordinates: [
-        [20.2482, 85.8000],
-        [20.2488, 85.7996],
+        [20.2486, 85.8000],
+        [20.2483, 85.7997],
       ],
     },
     {
@@ -120,8 +121,8 @@ export function ResourceMapCanvas({
       status: "In Transit",
       driverEta: "3 mins",
       coordinates: [
-        [20.2464, 85.7997],
-        [20.2466, 85.8011],
+        [20.2465, 85.7997],
+        [20.2465, 85.8008],
       ],
     },
   ];
@@ -171,7 +172,7 @@ export function ResourceMapCanvas({
     <div className="w-full h-full min-h-[380px] sm:min-h-[480px] lg:min-h-[580px] rounded-3xl overflow-hidden border border-border relative bg-surfaceSubtle shadow-card">
       {isMounted && L ? (
         <MapContainer
-          center={[20.2474, 85.8008]}
+          center={[20.2472, 85.8008]}
           zoom={18}
           scrollWheelZoom={true}
           className="w-full h-full"
