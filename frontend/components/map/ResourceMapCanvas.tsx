@@ -81,8 +81,8 @@ export function ResourceMapCanvas({
       status: "In Transit",
       driverEta: "2 mins",
       coordinates: [
-        [20.2473, 85.8008],
-        [20.2478, 85.8015],
+        [20.2494, 85.8008],
+        [20.2499, 85.8016],
       ],
     },
     {
@@ -94,9 +94,9 @@ export function ResourceMapCanvas({
       status: "Scheduled",
       driverEta: "3 mins",
       coordinates: [
-        [20.2474, 85.8001],
-        [20.2475, 85.8008],
-        [20.2478, 85.8015],
+        [20.2495, 85.8000],
+        [20.2496, 85.8008],
+        [20.2499, 85.8016],
       ],
     },
     {
@@ -108,8 +108,8 @@ export function ResourceMapCanvas({
       status: "Loading",
       driverEta: "2 mins",
       coordinates: [
-        [20.2486, 85.8000],
-        [20.2483, 85.7997],
+        [20.2510, 85.8003],
+        [20.2505, 85.7997],
       ],
     },
     {
@@ -121,8 +121,8 @@ export function ResourceMapCanvas({
       status: "In Transit",
       driverEta: "3 mins",
       coordinates: [
-        [20.2465, 85.7997],
-        [20.2465, 85.8008],
+        [20.2486, 85.7997],
+        [20.2486, 85.8009],
       ],
     },
   ];
@@ -142,17 +142,18 @@ export function ResourceMapCanvas({
         <div style="
           background-color: ${bgColor};
           color: #FFFDF8;
-          width: ${isSelected ? "38px" : "32px"};
-          height: ${isSelected ? "38px" : "32px"};
+          width: 32px;
+          height: 32px;
           border-radius: 50%;
           display: flex;
           align-items: center;
           justify-content: center;
           font-weight: 700;
-          font-size: ${isSelected ? "12px" : "11px"};
-          box-shadow: 0 6px 14px rgba(24, 32, 27, 0.25);
-          border: ${isSelected ? "3px solid #18201B" : "2px solid #FFFDF8"};
-          transition: all 0.2s ease;
+          font-size: 11px;
+          box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+          border: 2.5px solid #FFFDF8;
+          transition: transform 0.15s ease;
+          ${isSelected ? "transform: scale(1.15);" : ""}
         ">
           ${isNetSurplus ? `+${surplus}` : `-${shortage}`}
         </div>
@@ -172,7 +173,7 @@ export function ResourceMapCanvas({
     <div className="w-full h-full min-h-[380px] sm:min-h-[480px] lg:min-h-[580px] rounded-3xl overflow-hidden border border-border relative bg-surfaceSubtle shadow-card">
       {isMounted && L ? (
         <MapContainer
-          center={[20.2472, 85.8008]}
+          center={[20.2497, 85.8008]}
           zoom={18}
           scrollWheelZoom={true}
           className="w-full h-full"
