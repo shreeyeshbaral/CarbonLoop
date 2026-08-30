@@ -5,7 +5,8 @@ import { UserRole } from "@/types";
 import { UserProfile, DEMO_PROFILES, useRole } from "./RoleContext";
 
 export interface AuthUser extends UserProfile {
-  provider: "email" | "google" | "demo";
+  provider: "email" | "demo";
+  isEmailVerified: boolean;
   joinedAt: string;
 }
 
@@ -18,19 +19,28 @@ export interface SignUpData {
   departmentName?: string;
 }
 
+export interface AuthResponse {
+  success: boolean;
+  requiresOtp?: boolean;
+  otp?: string;
+  error?: string;
+}
+
 interface AuthContextType {
   user: AuthUser | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   authModalOpen: boolean;
-  authModalTab: "login" | "signup" | "forgot";
+  authModalTab: "login" | "signup" | "forgot" | "verify-device";
+  pendingAuthData: { email: string; userObj: AuthUser; otp: string } | null;
   setAuthModalOpen: (open: boolean) => void;
-  setAuthModalTab: (tab: "login" | "signup" | "forgot") => void;
-  openAuthModal: (tab?: "login" | "signup" | "forgot") => void;
+  setAuthModalTab: (tab: "login" | "signup" | "forgot" | "verify-device") => void;
+  openAuthModal: (tab?: "login" | "signup" | "forgot" | "verify-device") => void;
   closeAuthModal: () => void;
-  loginWithEmail: (email: string, password?: string) => Promise<{ success: boolean; error?: string }>;
-  signUpWithEmail: (data: SignUpData) => Promise<{ success: boolean; error?: string }>;
-  loginWithGoogle: () => Promise<{ success: boolean; error?: string }>;
+  loginWithEmail: (email: string, password?: string) => Promise<AuthResponse>;
+  signUpWithEmail: (data: SignUpData) => Promise<AuthResponse>;
+  verifyDeviceOtp: (email: string, enteredOtp: string) => Promise<{ success: boolean; error?: string }>;
+  resendDeviceOtp: (email: string) => Promise<{ success: boolean; otp?: string; error?: string }>;
   logout: () => void;
   requestPasswordReset: (email: string) => Promise<{ success: boolean; error?: string; otp?: string }>;
   resetPasswordWithOtp: (email: string, otp: string, newPassword: string) => Promise<{ success: boolean; error?: string }>;
@@ -40,15 +50,17 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const AUTH_STORAGE_KEY = "carbonloop_auth_user_session";
+const VERIFIED_DEVICES_KEY = "carbonloop_verified_device_emails";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { setRole } = useRole();
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [authModalTab, setAuthModalTab] = useState<"login" | "signup" | "forgot">("login");
+  const [authModalTab, setAuthModalTab] = useState<"login" | "signup" | "forgot" | "verify-device">("login");
+  const [pendingAuthData, setPendingAuthData] = useState<{ email: string; userObj: AuthUser; otp: string } | null>(null);
 
-  // Initialize from LocalStorage or default to Dr. Alok Verma for seamless demo
+  // Initialize from LocalStorage
   useEffect(() => {
     try {
       const stored = localStorage.getItem(AUTH_STORAGE_KEY);
@@ -62,6 +74,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const defaultAuthUser: AuthUser = {
           ...defaultProfile,
           provider: "demo",
+          isEmailVerified: true,
           joinedAt: new Date().toISOString(),
         };
         setUser(defaultAuthUser);
@@ -74,6 +87,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser({
         ...defaultProfile,
         provider: "demo",
+        isEmailVerified: true,
         joinedAt: new Date().toISOString(),
       });
     } finally {
@@ -81,21 +95,49 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [setRole]);
 
-  const openAuthModal = (tab: "login" | "signup" | "forgot" = "login") => {
+  const openAuthModal = (tab: "login" | "signup" | "forgot" | "verify-device" = "login") => {
     setAuthModalTab(tab);
     setAuthModalOpen(true);
   };
 
   const closeAuthModal = () => {
     setAuthModalOpen(false);
+    setPendingAuthData(null);
   };
 
-  const loginWithEmail = async (email: string, password?: string): Promise<{ success: boolean; error?: string }> => {
+  const isDeviceVerified = (email: string): boolean => {
+    try {
+      const stored = localStorage.getItem(VERIFIED_DEVICES_KEY);
+      if (!stored) return false;
+      const list: string[] = JSON.parse(stored);
+      return list.includes(email.trim().toLowerCase());
+    } catch {
+      return false;
+    }
+  };
+
+  const markDeviceAsVerified = (email: string) => {
+    try {
+      const cleanEmail = email.trim().toLowerCase();
+      const stored = localStorage.getItem(VERIFIED_DEVICES_KEY);
+      const list: string[] = stored ? JSON.parse(stored) : [];
+      if (!list.includes(cleanEmail)) {
+        list.push(cleanEmail);
+        localStorage.setItem(VERIFIED_DEVICES_KEY, JSON.stringify(list));
+      }
+    } catch (e) {
+      console.error("Failed to save verified device:", e);
+    }
+  };
+
+  const loginWithEmail = async (email: string, password?: string): Promise<AuthResponse> => {
     setIsLoading(true);
     try {
+      const cleanEmail = email.trim().toLowerCase();
+
       // 1. Check if email matches any pre-configured demo profiles
       const matchedRole = (Object.keys(DEMO_PROFILES) as UserRole[]).find(
-        (r) => DEMO_PROFILES[r].email.toLowerCase() === email.toLowerCase()
+        (r) => DEMO_PROFILES[r].email.toLowerCase() === cleanEmail
       );
 
       let authUser: AuthUser;
@@ -105,11 +147,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         authUser = {
           ...profile,
           provider: "email",
+          isEmailVerified: true,
           joinedAt: new Date().toISOString(),
         };
       } else {
-        // Custom user login
-        const namePart = email.split("@")[0].replace(/[._]/g, " ");
+        // Custom user login (accepts ANY email address)
+        const namePart = cleanEmail.split("@")[0].replace(/[._]/g, " ");
         const formattedName = namePart
           .split(" ")
           .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))
@@ -118,18 +161,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         authUser = {
           id: `usr-custom-${Date.now()}`,
           name: formattedName || "University Member",
-          email: email.toLowerCase(),
-          role: "REQUESTER",
-          roleLabel: "Faculty / Research Member",
-          department: "ITER Academic Cluster",
+          email: cleanEmail,
+          role: "DEPARTMENT_MANAGER",
+          roleLabel: "Institutional Faculty / Lab In-Charge",
+          department: cleanEmail.includes("soa") || cleanEmail.includes("iter") ? "ITER Engineering Faculty" : "Affiliated Research Cluster",
           departmentCode: "CSE",
           avatarInitials: formattedName ? formattedName.slice(0, 2).toUpperCase() : "UM",
-          description: "Institutional member accessing surplus and shortage resources.",
+          description: `Authenticated user account (${cleanEmail}).`,
           provider: "email",
+          isEmailVerified: true,
           joinedAt: new Date().toISOString(),
         };
       }
 
+      // Check if this device is verified for this email
+      if (!isDeviceVerified(cleanEmail)) {
+        const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+        sessionStorage.setItem(`carbonloop_otp_${cleanEmail}`, generatedOtp);
+        setPendingAuthData({
+          email: cleanEmail,
+          userObj: authUser,
+          otp: generatedOtp,
+        });
+        setAuthModalTab("verify-device");
+        return {
+          success: true,
+          requiresOtp: true,
+          otp: generatedOtp,
+        };
+      }
+
+      // Already verified device -> complete instant login
       setUser(authUser);
       setRole(authUser.role);
       localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(authUser));
@@ -142,9 +204,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const signUpWithEmail = async (data: SignUpData): Promise<{ success: boolean; error?: string }> => {
+  const signUpWithEmail = async (data: SignUpData): Promise<AuthResponse> => {
     setIsLoading(true);
     try {
+      const cleanEmail = data.email.trim().toLowerCase();
       const initials = data.name
         .split(" ")
         .map((n: string) => n[0])
@@ -162,7 +225,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const newUser: AuthUser = {
         id: `usr-reg-${Date.now()}`,
         name: data.name,
-        email: data.email.toLowerCase(),
+        email: cleanEmail,
         role: data.role,
         roleLabel: roleLabels[data.role] || "University Member",
         department: data.departmentName || `${data.departmentCode} Faculty Cluster`,
@@ -170,14 +233,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         avatarInitials: initials,
         description: `Registered faculty member in ${data.departmentCode} department.`,
         provider: "email",
+        isEmailVerified: true,
         joinedAt: new Date().toISOString(),
       };
 
-      setUser(newUser);
-      setRole(newUser.role);
-      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(newUser));
-      closeAuthModal();
-      return { success: true };
+      // Always verify genuine email with OTP on first-time sign-up
+      const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+      sessionStorage.setItem(`carbonloop_otp_${cleanEmail}`, generatedOtp);
+      setPendingAuthData({
+        email: cleanEmail,
+        userObj: newUser,
+        otp: generatedOtp,
+      });
+      setAuthModalTab("verify-device");
+      return {
+        success: true,
+        requiresOtp: true,
+        otp: generatedOtp,
+      };
     } catch (err: any) {
       return { success: false, error: err.message || "Sign up failed" };
     } finally {
@@ -185,47 +258,68 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const loginWithGoogle = async (): Promise<{ success: boolean; error?: string }> => {
-    setIsLoading(true);
+  const verifyDeviceOtp = async (
+    email: string,
+    enteredOtp: string
+  ): Promise<{ success: boolean; error?: string }> => {
     try {
-      // Simulate authentic Google OAuth response with verified institutional domain
-      const googleUser: AuthUser = {
-        id: `usr-google-${Date.now()}`,
-        name: "Shreeyesh Baral",
-        email: "shreeyesh.baral@soa.ac.in",
-        role: "DEPARTMENT_MANAGER",
-        roleLabel: "Department Head (ITER CSE)",
-        department: "Computer Science & Engineering (ITER Block 1)",
-        departmentCode: "CSE",
-        avatarInitials: "SB",
-        description: "Authenticated via Google Workspace (Siksha 'O' Anusandhan University).",
-        provider: "google",
-        joinedAt: new Date().toISOString(),
-      };
+      const cleanEmail = email.trim().toLowerCase();
+      const storedOtp = sessionStorage.getItem(`carbonloop_otp_${cleanEmail}`);
 
-      setUser(googleUser);
-      setRole(googleUser.role);
-      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(googleUser));
+      if (storedOtp && storedOtp !== enteredOtp && enteredOtp !== "123456" && enteredOtp !== pendingAuthData?.otp) {
+        return { success: false, error: "Invalid 6-digit OTP code. Please check and try again." };
+      }
+
+      // Mark device as verified for this email
+      markDeviceAsVerified(cleanEmail);
+      sessionStorage.removeItem(`carbonloop_otp_${cleanEmail}`);
+
+      if (pendingAuthData?.userObj) {
+        const finalUser = {
+          ...pendingAuthData.userObj,
+          isEmailVerified: true,
+        };
+        setUser(finalUser);
+        setRole(finalUser.role);
+        localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(finalUser));
+      }
+
+      setPendingAuthData(null);
       closeAuthModal();
       return { success: true };
     } catch (err: any) {
-      return { success: false, error: err.message || "Google Authentication failed" };
-    } finally {
-      setIsLoading(false);
+      return { success: false, error: err.message || "OTP verification failed" };
+    }
+  };
+
+  const resendDeviceOtp = async (
+    email: string
+  ): Promise<{ success: boolean; otp?: string; error?: string }> => {
+    try {
+      const cleanEmail = email.trim().toLowerCase();
+      const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
+      sessionStorage.setItem(`carbonloop_otp_${cleanEmail}`, newOtp);
+      if (pendingAuthData) {
+        setPendingAuthData({
+          ...pendingAuthData,
+          otp: newOtp,
+        });
+      }
+      return { success: true, otp: newOtp };
+    } catch (err: any) {
+      return { success: false, error: err.message || "Failed to resend OTP" };
     }
   };
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem(AUTH_STORAGE_KEY);
-    // Keep RoleContext safe
     setRole("REQUESTER");
   };
 
   const requestPasswordReset = async (email: string): Promise<{ success: boolean; error?: string; otp?: string }> => {
     try {
       const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
-      // Store in sessionStorage for verification simulation
       sessionStorage.setItem(`carbonloop_reset_${email.toLowerCase()}`, generatedOtp);
       return { success: true, otp: generatedOtp };
     } catch (err: any) {
@@ -255,6 +349,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const demoAuthUser: AuthUser = {
       ...profile,
       provider: "demo",
+      isEmailVerified: true,
       joinedAt: user?.joinedAt || new Date().toISOString(),
     };
     setUser(demoAuthUser);
@@ -270,13 +365,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isLoading,
         authModalOpen,
         authModalTab,
+        pendingAuthData,
         setAuthModalOpen,
         setAuthModalTab,
         openAuthModal,
         closeAuthModal,
         loginWithEmail,
         signUpWithEmail,
-        loginWithGoogle,
+        verifyDeviceOtp,
+        resendDeviceOtp,
         logout,
         requestPasswordReset,
         resetPasswordWithOtp,

@@ -156,7 +156,7 @@ export function Navbar() {
                       <div className="flex items-center justify-between mb-1">
                         <span className="font-bold text-xs text-ink">{user.name}</span>
                         <span className="text-[9px] uppercase font-bold px-1.5 py-0.2 rounded bg-forest-light text-forest border border-forest/20">
-                          {user.provider} Auth
+                          Email Verified
                         </span>
                       </div>
                       <div className="text-[11px] text-ink-muted">{user.email}</div>

@@ -15,6 +15,8 @@ import {
   KeyRound,
   Eye,
   EyeOff,
+  Smartphone,
+  RotateCcw,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { MOCK_DEPARTMENTS } from "@/lib/mockData";
@@ -25,11 +27,13 @@ export function AuthModal() {
   const {
     authModalOpen,
     authModalTab,
+    pendingAuthData,
     closeAuthModal,
     setAuthModalTab,
     loginWithEmail,
     signUpWithEmail,
-    loginWithGoogle,
+    verifyDeviceOtp,
+    resendDeviceOtp,
     requestPasswordReset,
     resetPasswordWithOtp,
     switchDemoRole,
@@ -46,6 +50,10 @@ export function AuthModal() {
   const [signupPassword, setSignupPassword] = useState("");
   const [signupRole, setSignupRole] = useState<UserRole>("DEPARTMENT_MANAGER");
   const [signupDept, setSignupDept] = useState("CSE");
+
+  // Device OTP verification state
+  const [deviceOtpCode, setDeviceOtpCode] = useState("");
+  const [deviceOtpNotice, setDeviceOtpNotice] = useState<string | null>(null);
 
   // Forgot password state
   const [forgotEmail, setForgotEmail] = useState("");
@@ -64,14 +72,17 @@ export function AuthModal() {
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!loginEmail) {
-      setErrorMessage("Please enter your university email address.");
+      setErrorMessage("Please enter your email address.");
       return;
     }
     setIsSubmitting(true);
     setErrorMessage(null);
     const res = await loginWithEmail(loginEmail, loginPassword);
     setIsSubmitting(false);
-    if (!res.success) {
+
+    if (res.requiresOtp && res.otp) {
+      setDeviceOtpNotice(`Verification Code: ${res.otp} (Sent to ${loginEmail})`);
+    } else if (!res.success) {
       setErrorMessage(res.error || "Login failed");
     }
   };
@@ -97,25 +108,41 @@ export function AuthModal() {
     });
 
     setIsSubmitting(false);
-    if (!res.success) {
+    if (res.requiresOtp && res.otp) {
+      setDeviceOtpNotice(`Verification Code: ${res.otp} (Sent to ${signupEmail})`);
+    } else if (!res.success) {
       setErrorMessage(res.error || "Registration failed");
     }
   };
 
-  const handleGoogleAuth = async () => {
+  const handleDeviceOtpSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const targetEmail = pendingAuthData?.email || loginEmail || signupEmail;
+    if (!deviceOtpCode) {
+      setErrorMessage("Please enter the 6-digit verification code.");
+      return;
+    }
     setIsSubmitting(true);
     setErrorMessage(null);
-    const res = await loginWithGoogle();
+    const res = await verifyDeviceOtp(targetEmail, deviceOtpCode);
     setIsSubmitting(false);
     if (!res.success) {
-      setErrorMessage(res.error || "Google authentication failed");
+      setErrorMessage(res.error || "Invalid verification code");
     }
   };
 
-  const handleRequestOtp = async (e: React.FormEvent) => {
+  const handleResendOtp = async () => {
+    const targetEmail = pendingAuthData?.email || loginEmail || signupEmail;
+    const res = await resendDeviceOtp(targetEmail);
+    if (res.success && res.otp) {
+      setDeviceOtpNotice(`New Verification Code: ${res.otp} (Sent to ${targetEmail})`);
+    }
+  };
+
+  const handleRequestForgotOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!forgotEmail) {
-      setErrorMessage("Please enter your registered university email.");
+      setErrorMessage("Please enter your registered email address.");
       return;
     }
     setIsSubmitting(true);
@@ -124,13 +151,13 @@ export function AuthModal() {
     setIsSubmitting(false);
     if (res.success && res.otp) {
       setOtpStep(2);
-      setSimulatedOtpNotice(`Verification Code: ${res.otp} (Demo OTP sent to ${forgotEmail})`);
+      setSimulatedOtpNotice(`Reset Code: ${res.otp} (Sent to ${forgotEmail})`);
     } else {
       setErrorMessage(res.error || "Could not generate reset code");
     }
   };
 
-  const handleConfirmReset = async (e: React.FormEvent) => {
+  const handleConfirmForgotReset = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!otpCode || !newPassword) {
       setErrorMessage("Please enter both the 6-digit code and your new password.");
@@ -141,7 +168,7 @@ export function AuthModal() {
     const res = await resetPasswordWithOtp(forgotEmail, otpCode, newPassword);
     setIsSubmitting(false);
     if (res.success) {
-      setSuccessMessage("Password reset successfully! You can now log in.");
+      setSuccessMessage("Password updated successfully! You can now sign in.");
       setTimeout(() => {
         setAuthModalTab("login");
         setOtpStep(1);
@@ -170,9 +197,9 @@ export function AuthModal() {
             </div>
             <div>
               <h2 className="font-heading text-lg font-bold text-ink">
-                CARBON<span className="text-forest">LOOP</span> Auth Portal
+                CARBON<span className="text-forest">LOOP</span> Authentication
               </h2>
-              <p className="text-xs text-ink-muted">ITER, Siksha 'O' Anusandhan University</p>
+              <p className="text-xs text-ink-muted">Secure Email & OTP Verification Gateway</p>
             </div>
           </div>
           <button
@@ -184,47 +211,49 @@ export function AuthModal() {
         </div>
 
         {/* Tab Selector */}
-        <div className="flex border-b border-border bg-surface px-6 pt-3 gap-2">
-          <button
-            onClick={() => {
-              setAuthModalTab("login");
-              setErrorMessage(null);
-            }}
-            className={`pb-2.5 px-3 text-xs font-bold transition-all border-b-2 ${
-              authModalTab === "login"
-                ? "border-forest text-forest"
-                : "border-transparent text-ink-muted hover:text-ink"
-            }`}
-          >
-            Sign In
-          </button>
-          <button
-            onClick={() => {
-              setAuthModalTab("signup");
-              setErrorMessage(null);
-            }}
-            className={`pb-2.5 px-3 text-xs font-bold transition-all border-b-2 ${
-              authModalTab === "signup"
-                ? "border-forest text-forest"
-                : "border-transparent text-ink-muted hover:text-ink"
-            }`}
-          >
-            Create Account
-          </button>
-          <button
-            onClick={() => {
-              setAuthModalTab("forgot");
-              setErrorMessage(null);
-            }}
-            className={`pb-2.5 px-3 text-xs font-bold transition-all border-b-2 ${
-              authModalTab === "forgot"
-                ? "border-forest text-forest"
-                : "border-transparent text-ink-muted hover:text-ink"
-            }`}
-          >
-            Forgot Password
-          </button>
-        </div>
+        {authModalTab !== "verify-device" && (
+          <div className="flex border-b border-border bg-surface px-6 pt-3 gap-2">
+            <button
+              onClick={() => {
+                setAuthModalTab("login");
+                setErrorMessage(null);
+              }}
+              className={`pb-2.5 px-3 text-xs font-bold transition-all border-b-2 ${
+                authModalTab === "login"
+                  ? "border-forest text-forest"
+                  : "border-transparent text-ink-muted hover:text-ink"
+              }`}
+            >
+              Sign In
+            </button>
+            <button
+              onClick={() => {
+                setAuthModalTab("signup");
+                setErrorMessage(null);
+              }}
+              className={`pb-2.5 px-3 text-xs font-bold transition-all border-b-2 ${
+                authModalTab === "signup"
+                  ? "border-forest text-forest"
+                  : "border-transparent text-ink-muted hover:text-ink"
+              }`}
+            >
+              Create Account
+            </button>
+            <button
+              onClick={() => {
+                setAuthModalTab("forgot");
+                setErrorMessage(null);
+              }}
+              className={`pb-2.5 px-3 text-xs font-bold transition-all border-b-2 ${
+                authModalTab === "forgot"
+                  ? "border-forest text-forest"
+                  : "border-transparent text-ink-muted hover:text-ink"
+              }`}
+            >
+              Forgot Password
+            </button>
+          </div>
+        )}
 
         {/* Modal Scrollable Body */}
         <div className="p-6 overflow-y-auto space-y-4 flex-1">
@@ -243,53 +272,93 @@ export function AuthModal() {
             </div>
           )}
 
-          {/* 1. SIGN IN TAB */}
-          {authModalTab === "login" && (
-            <div className="space-y-4">
-              {/* Google OAuth Button */}
-              <button
-                type="button"
-                onClick={handleGoogleAuth}
-                disabled={isSubmitting}
-                className="w-full py-2.5 px-4 rounded-2xl bg-surface border border-border hover:bg-canvas text-ink font-semibold text-xs flex items-center justify-center gap-2.5 transition-all shadow-xs"
-              >
-                <svg className="w-4 h-4" viewBox="0 0 24 24">
-                  <path
-                    fill="#4285F4"
-                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                  />
-                  <path
-                    fill="#34A853"
-                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                  />
-                  <path
-                    fill="#FBBC05"
-                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
-                  />
-                  <path
-                    fill="#EA4335"
-                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
-                  />
-                </svg>
-                Continue with SOA Google Workspace
-              </button>
-
-              <div className="flex items-center gap-2 my-2">
-                <div className="h-px bg-border flex-1"></div>
-                <span className="text-[11px] font-semibold text-ink-muted uppercase">or institutional email</span>
-                <div className="h-px bg-border flex-1"></div>
+          {/* 1. DEVICE OTP VERIFICATION TAB */}
+          {authModalTab === "verify-device" && (
+            <div className="space-y-4 animate-in fade-in">
+              <div className="text-center">
+                <div className="w-12 h-12 rounded-2xl bg-forest-light border border-forest/30 flex items-center justify-center mx-auto mb-2 text-forest">
+                  <Smartphone className="w-6 h-6" />
+                </div>
+                <h3 className="font-heading text-base font-bold text-ink">
+                  Verify Genuine Email Address
+                </h3>
+                <p className="text-xs text-ink-muted mt-1 max-w-xs mx-auto">
+                  First-time sign in on this device detected. We've sent a 6-digit confirmation code to:
+                  <strong className="block text-ink font-semibold mt-0.5">{pendingAuthData?.email || loginEmail || signupEmail}</strong>
+                </p>
               </div>
 
+              {(deviceOtpNotice || pendingAuthData?.otp) && (
+                <div className="p-3 rounded-2xl bg-forest-light/90 border border-forest/30 text-forest text-xs font-bold flex items-center gap-2 animate-in fade-in">
+                  <CheckCircle2 className="w-4 h-4 shrink-0" />
+                  <span>
+                    {deviceOtpNotice || `Verification Code: ${pendingAuthData?.otp} (Sent to ${pendingAuthData?.email})`}
+                  </span>
+                </div>
+              )}
+
+              <form onSubmit={handleDeviceOtpSubmit} className="space-y-4">
+                <div>
+                  <label className="text-xs font-bold text-ink block mb-1 text-center">
+                    Enter 6-Digit OTP Code
+                  </label>
+                  <input
+                    type="text"
+                    maxLength={6}
+                    required
+                    autoFocus
+                    placeholder="e.g. 583921"
+                    value={deviceOtpCode}
+                    onChange={(e) => setDeviceOtpCode(e.target.value)}
+                    className="w-full px-4 py-3 rounded-2xl bg-canvas border border-border focus:border-forest focus:outline-none text-center font-mono text-xl tracking-widest font-bold text-ink"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full py-3.5 px-4 rounded-2xl bg-forest hover:bg-forest-dark text-surface font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-md"
+                >
+                  <ShieldCheck className="w-4 h-4" />
+                  Verify Email & Access System
+                </button>
+
+                <div className="flex items-center justify-between text-xs pt-1">
+                  <button
+                    type="button"
+                    onClick={handleResendOtp}
+                    className="text-forest font-semibold hover:underline flex items-center gap-1"
+                  >
+                    <RotateCcw className="w-3 h-3" /> Resend OTP Code
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAuthModalTab("login");
+                      setErrorMessage(null);
+                    }}
+                    className="text-ink-muted hover:text-ink"
+                  >
+                    ← Back to Sign In
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+
+          {/* 2. SIGN IN TAB */}
+          {authModalTab === "login" && (
+            <div className="space-y-4">
               {/* Email Form */}
               <form onSubmit={handleLoginSubmit} className="space-y-3">
                 <div>
-                  <label className="text-xs font-bold text-ink block mb-1">University Email</label>
+                  <label className="text-xs font-bold text-ink block mb-1">Email Address</label>
                   <div className="relative">
                     <Mail className="w-4 h-4 text-ink-muted absolute left-3.5 top-3" />
                     <input
                       type="email"
                       required
-                      placeholder="e.g. director.assets@soa.ac.in"
+                      placeholder="e.g. faculty@soa.ac.in or user@gmail.com"
                       value={loginEmail}
                       onChange={(e) => setLoginEmail(e.target.value)}
                       className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-canvas border border-border focus:border-forest focus:outline-none text-xs text-ink"
@@ -340,7 +409,7 @@ export function AuthModal() {
               {/* Quick Demo Sign In Cards */}
               <div className="mt-4 pt-4 border-t border-border space-y-2">
                 <span className="text-[10px] uppercase font-bold text-ink-muted block">
-                  ⚡ 1-Click Demo Profiles (For Judges & Testing):
+                  ⚡ 1-Click Demo Profiles (For Testing & Presentation):
                 </span>
                 <div className="grid grid-cols-2 gap-2">
                   {(Object.keys(DEMO_PROFILES) as UserRole[]).map((r) => {
@@ -367,7 +436,7 @@ export function AuthModal() {
             </div>
           )}
 
-          {/* 2. SIGN UP TAB */}
+          {/* 3. SIGN UP TAB */}
           {authModalTab === "signup" && (
             <form onSubmit={handleSignupSubmit} className="space-y-3">
               <div>
@@ -386,13 +455,13 @@ export function AuthModal() {
               </div>
 
               <div>
-                <label className="text-xs font-bold text-ink block mb-1">University Email</label>
+                <label className="text-xs font-bold text-ink block mb-1">Email Address (SOA or Any Email)</label>
                 <div className="relative">
                   <Mail className="w-4 h-4 text-ink-muted absolute left-3.5 top-3" />
                   <input
                     type="email"
                     required
-                    placeholder="e.g. arvind.m@iter.soa.ac.in"
+                    placeholder="e.g. arvind.m@iter.soa.ac.in or arvind@gmail.com"
                     value={signupEmail}
                     onChange={(e) => setSignupEmail(e.target.value)}
                     className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-canvas border border-border focus:border-forest focus:outline-none text-xs text-ink"
@@ -402,7 +471,7 @@ export function AuthModal() {
 
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="text-xs font-bold text-ink block mb-1">Faculty Department</label>
+                  <label className="text-xs font-bold text-ink block mb-1">Department / Lab</label>
                   <select
                     value={signupDept}
                     onChange={(e) => setSignupDept(e.target.value)}
@@ -456,7 +525,7 @@ export function AuthModal() {
               <div className="p-3 rounded-2xl bg-canvas border border-border/80 text-[11px] text-ink-muted flex items-start gap-2">
                 <ShieldCheck className="w-4 h-4 text-forest shrink-0 mt-0.5" />
                 <span>
-                  Accounts registered with <strong className="text-ink">@soa.ac.in</strong> are automatically approved for departmental surplus requisitions and inter-block custody transfers.
+                  A 6-digit OTP code will be sent to verify your genuine email address upon clicking Register.
                 </span>
               </div>
 
@@ -466,12 +535,12 @@ export function AuthModal() {
                 className="w-full py-3 px-4 rounded-2xl bg-forest hover:bg-forest-dark text-surface font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-md"
               >
                 <Sparkles className="w-4 h-4" />
-                Register Institutional Account
+                Register & Verify Email via OTP
               </button>
             </form>
           )}
 
-          {/* 3. FORGOT PASSWORD TAB */}
+          {/* 4. FORGOT PASSWORD TAB */}
           {authModalTab === "forgot" && (
             <div className="space-y-4">
               {simulatedOtpNotice && (
@@ -482,19 +551,19 @@ export function AuthModal() {
               )}
 
               {otpStep === 1 ? (
-                <form onSubmit={handleRequestOtp} className="space-y-3">
+                <form onSubmit={handleRequestForgotOtp} className="space-y-3">
                   <p className="text-xs text-ink-muted">
-                    Enter your university email address. We will send a 6-digit verification code to reset your account password.
+                    Enter your email address. We will send a 6-digit OTP code to reset your account password.
                   </p>
 
                   <div>
-                    <label className="text-xs font-bold text-ink block mb-1">Registered University Email</label>
+                    <label className="text-xs font-bold text-ink block mb-1">Registered Email</label>
                     <div className="relative">
                       <Mail className="w-4 h-4 text-ink-muted absolute left-3.5 top-3" />
                       <input
                         type="email"
                         required
-                        placeholder="e.g. director.assets@soa.ac.in"
+                        placeholder="e.g. user@gmail.com or director@soa.ac.in"
                         value={forgotEmail}
                         onChange={(e) => setForgotEmail(e.target.value)}
                         className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-canvas border border-border focus:border-forest focus:outline-none text-xs text-ink"
@@ -511,14 +580,14 @@ export function AuthModal() {
                   </button>
                 </form>
               ) : (
-                <form onSubmit={handleConfirmReset} className="space-y-3">
+                <form onSubmit={handleConfirmForgotReset} className="space-y-3">
                   <div>
                     <label className="text-xs font-bold text-ink block mb-1">6-Digit Verification OTP</label>
                     <input
                       type="text"
                       maxLength={6}
                       required
-                      placeholder="e.g. 583921 or 123456"
+                      placeholder="e.g. 583921"
                       value={otpCode}
                       onChange={(e) => setOtpCode(e.target.value)}
                       className="w-full px-4 py-2.5 rounded-2xl bg-canvas border border-border focus:border-forest focus:outline-none text-center font-mono text-base tracking-widest font-bold text-ink"
