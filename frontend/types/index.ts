@@ -181,3 +181,105 @@ export interface ImpactMetrics {
   co2AvoidedKg: number;
   logisticsKmOptimized: number;
 }
+
+// ---------------------------------------------------
+// DELIVERY EFFICIENCY & EXECUTION TYPES
+// ---------------------------------------------------
+
+export type DeliveryRunStatus = 'SCHEDULED' | 'IN_TRANSIT' | 'COMPLETED' | 'DELAYED' | 'CANCELLED';
+export type DeliveryStopStatus = 'COMPLETED' | 'FAILED' | 'PENDING' | 'UNPLANNED';
+
+export interface DeliveryStopExecution {
+  id: string;
+  sequence: number;
+  name: string;
+  departmentCode: string;
+  building: string;
+  lat: number;
+  lng: number;
+  type: 'DEPOT' | 'PICKUP' | 'DELIVERY';
+  status: DeliveryStopStatus;
+  plannedArrivalTime: string;
+  actualArrivalTime?: string;
+  plannedDwellMinutes: number;
+  actualDwellMinutes?: number;
+  isOnTime: boolean;
+  assetName?: string;
+  assetQuantity: number;
+  deliveredQuantity: number;
+  failureReason?: string;
+  notes?: string;
+}
+
+export interface DeliveryEfficiencyScoreBreakdown {
+  distanceEfficiency: number;   // 0 - 100
+  timeEfficiency: number;       // 0 - 100
+  completionRate: number;       // 0 - 100
+  onTimePerformance: number;    // 0 - 100
+  vehicleUtilization: number;   // 0 - 100
+  overallScore: number;         // 0 - 100
+}
+
+export interface DeliveryEfficiencyMetrics {
+  // Distance
+  baselineDistanceKm: number;
+  plannedDistanceKm: number;
+  actualDistanceKm: number;
+  distanceSavedByOptimizationKm: number;
+  distanceDeviationPercent: number; // ((actual - planned) / planned) * 100
+  optimizationDistanceImprovementPercent: number; // ((baseline - planned) / baseline) * 100
+
+  // Time
+  baselineDurationMinutes: number;
+  plannedDurationMinutes: number;
+  actualDurationMinutes: number;
+  timeDeviationPercent: number; // ((actual - planned) / planned) * 100
+  optimizationTimeImprovementPercent: number;
+
+  // Asset Throughput
+  plannedAssetsCount: number;
+  deliveredAssetsCount: number;
+  failedAssetsCount: number;
+  deliveryCompletionRatePercent: number; // (delivered / planned) * 100
+
+  // Punctuality & Stops
+  plannedStopsCount: number;
+  actualStopsCount: number;
+  unplannedStopsCount: number;
+  onTimeDeliveryRatePercent: number;
+
+  // Vehicle Capacity
+  vehicleCapacityKg: number;
+  actualLoadKg: number;
+  vehicleUtilizationPercent: number; // (actualLoad / capacity) * 100
+
+  // Carbon Transport Footprint (0.24 kg CO2e / km)
+  baselineCo2Kg: number;
+  plannedCo2Kg: number;
+  actualCo2Kg: number;
+  co2SavedByOptimizationKg: number;
+  co2ExecutionDeviationPercent: number;
+
+  // Overall Explainable Score
+  scoreBreakdown: DeliveryEfficiencyScoreBreakdown;
+}
+
+export interface DeliveryRun {
+  id: string;                      // e.g. "DLV-001"
+  title: string;                   // e.g. "Morning Inter-Department Surplus Loop"
+  status: DeliveryRunStatus;
+  date: string;
+  driverName: string;
+  driverContact: string;
+  vehicleName: string;             // e.g. "Electric Utility Van #1 (Tata Ace EV)"
+  vehicleRegNo: string;
+  vehicleCapacityKg: number;
+  isDemoData: boolean;
+  notes?: string;
+  stops: DeliveryStopExecution[];
+  metrics: DeliveryEfficiencyMetrics;
+  baselinePolylineCoordinates: [number, number][];
+  optimizedPolylineCoordinates: [number, number][];
+  actualPolylineCoordinates: [number, number][];
+}
+

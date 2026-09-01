@@ -3,6 +3,11 @@ import { getDepartments } from "../controllers/departmentController";
 import { getAssets, getAssetById, createAsset } from "../controllers/assetController";
 import { getRequests, createRequest } from "../controllers/requestController";
 import { getImpactSummary } from "../controllers/impactController";
+import {
+  getDeliveryRuns,
+  getDeliveryRunById,
+  getDeliveryEfficiencySummary,
+} from "../controllers/deliveryController";
 
 const router = Router();
 
@@ -26,4 +31,10 @@ router.post("/requests", createRequest);
 // Impact & ESG Metrics
 router.get("/impact/summary", getImpactSummary);
 
+// Delivery Execution & Efficiency Metrics
+router.get("/delivery/runs", getDeliveryRuns);
+router.get("/delivery/runs/:id", getDeliveryRunById);
+router.get("/delivery/efficiency/summary", getDeliveryEfficiencySummary);
+
 export default router;
+
